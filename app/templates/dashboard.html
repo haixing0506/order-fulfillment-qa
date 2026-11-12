@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>履约工作台 | 履约中枢</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="app-body">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="sidebar-brand" href="/" aria-label="履约中枢首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><use href="#icon-box"></use></svg>
+        </span>
+        <span class="brand-text">
+          <strong>履约中枢</strong>
+          <small>FULFILLMENT OS</small>
+        </span>
+      </a>
+
+      <nav class="sidebar-nav" aria-label="主导航">
+        <p class="nav-label">工作区</p>
+        <a class="nav-item is-active" href="#workbench">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-layout"></use></svg>
+          <span>工作台</span>
+        </a>
+        <a class="nav-item" href="#orders">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-list"></use></svg>
+          <span>订单队列</span>
+          <span class="nav-count" id="nav-order-count">0</span>
+        </a>
+        <a class="nav-item" href="#inventory">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-boxes"></use></svg>
+          <span>商品库存</span>
+        </a>
+        <p class="nav-label nav-label-spaced">质量</p>
+        <a class="nav-item" href="/reports/quality_dashboard.html" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-activity"></use></svg>
+          <span>质量报告</span>
+          <svg class="nav-external" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-external"></use></svg>
+        </a>
+        <a class="nav-item" href="/api/docs" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-code"></use></svg>
+          <span>接口文档</span>
+          <svg class="nav-external" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-external"></use></svg>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <span class="avatar" id="user-avatar">--</span>
+          <span class="sidebar-user-copy">
+            <strong id="user-name">加载中</strong>
+            <small id="user-role">读取权限</small>
+          </span>
+        </div>
+        <button class="icon-button icon-button-dark" id="logout-button" type="button"
+                title="退出登录" aria-label="退出登录">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-logout"></use></svg>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="breadcrumb">履约管理 / 工作台</p>
+          <h1>履约工作台</h1>
+        </div>
+        <div class="topbar-actions">
+          <div class="system-state">
+            <span class="status-dot"></span>
+            <span>系统运行正常</span>
+          </div>
+          <div class="topbar-date" id="current-date"></div>
+          <button class="icon-button" id="refresh-button" type="button" title="刷新数据" aria-label="刷新数据">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-refresh"></use></svg>
+          </button>
+        </div>
+      </header>
+
+      <div class="page-body">
+        <section class="page-intro" id="workbench">
+          <div>
+            <p class="section-kicker">今日概览</p>
+            <h2>订单、库存与履约进度</h2>
+          </div>
+          <button class="button button-primary can-write" id="new-order-button" data-testid="new-order" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-plus"></use></svg>
+            <span>新建订单</span>
+          </button>
+        </section>
+
+        <section class="kpi-grid" aria-label="关键指标">
+          <article class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">今日订单</span>
+              <span class="kpi-icon kpi-icon-blue"><svg viewBox="0 0 24 24"><use href="#icon-list"></use></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpi-orders-today" data-testid="kpi-orders-today">0</strong>
+            <p class="kpi-note">累计 <span id="kpi-orders-total">0</span> 笔</p>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">待履约</span>
+              <span class="kpi-icon kpi-icon-amber"><svg viewBox="0 0 24 24"><use href="#icon-clock"></use></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpi-pending-orders" data-testid="kpi-pending-orders">0</strong>
+            <p class="kpi-note">待拣货与拣货中</p>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">低库存商品</span>
+              <span class="kpi-icon kpi-icon-red"><svg viewBox="0 0 24 24"><use href="#icon-alert"></use></svg></span>
+            </div>
+            <strong class="kpi-value" id="kpi-low-stock" data-testid="kpi-low-stock">0</strong>
+            <p class="kpi-note">库存不高于 20 件</p>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-top">
+              <span class="kpi-label">履约完成率</span>
+              <span class="kpi-icon kpi-icon-green"><svg viewBox="0 0 24 24"><use href="#icon-check"></use></svg></span>
+            </div>
+            <strong class="kpi-value"><span id="kpi-fulfillment-rate">0</span><small>%</small></strong>
+            <p class="kpi-note">已完成 / 非取消订单</p>
+          </article>
+        </section>
+
+        <section class="workspace-grid">
+          <article class="panel product-panel" id="inventory">
+            <header class="panel-header">
+              <div>
+                <p class="panel-kicker">Inventory</p>
+                <h3>商品库存</h3>
+              </div>
+              <div class="panel-tools">
+                <div class="search-shell">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-search"></use></svg>
+                  <input id="product-search" data-testid="product-search" type="search"
+                         placeholder="搜索名称或 SKU" aria-label="搜索商品">
+                </div>
+                <select id="category-filter" data-testid="category-filter" aria-label="商品分类">
+                  <option value="">全部分类</option>
+                </select>
+              </div>
+            </header>
+            <div class="table-wrap">
+              <table class="data-table product-table">
+                <thead>
+                  <tr>
+                    <th>商品</th>
+                    <th>分类</th>
+                    <th class="align-right">单价</th>
+                    <th class="align-right">库存</th>
+                    <th class="align-right">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="product-table-body">
+                  <tr><td colspan="5" class="empty-table">正在加载商品...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <aside class="panel draft-panel">
+            <header class="panel-header draft-header">
+              <div>
+                <p class="panel-kicker">Order Draft</p>
+                <h3>待提交订单</h3>
+              </div>
+              <button class="text-button" id="clear-cart-button" type="button">清空</button>
+            </header>
+            <div class="cart-lines" id="cart-lines" data-testid="cart-lines">
+              <div class="cart-empty" data-testid="cart-empty">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-cart"></use></svg>
+                <strong>订单还是空的</strong>
+                <span>从左侧商品列表加入商品</span>
+              </div>
+            </div>
+            <div class="draft-footer">
+              <label class="remark-field" for="order-remark">
+                <span>订单备注</span>
+                <textarea id="order-remark" data-testid="order-remark" maxlength="200"
+                          rows="2" placeholder="选填，最多 200 字"></textarea>
+              </label>
+              <div class="draft-total">
+                <span>合计</span>
+                <strong>¥<span id="cart-total" data-testid="cart-total">0.00</span></strong>
+              </div>
+              <button class="button button-primary button-block can-write" id="submit-order-button"
+                      data-testid="submit-order" type="button" disabled>
+                <span>提交订单</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+              </button>
+            </div>
+          </aside>
+        </section>
+
+        <section class="panel orders-panel" id="orders">
+          <header class="panel-header orders-header">
+            <div>
+              <p class="panel-kicker">Fulfillment Queue</p>
+              <h3>订单队列</h3>
+            </div>
+            <div class="segmented" id="order-filter" aria-label="订单状态筛选">
+              <button class="is-active" type="button" data-status="">全部</button>
+              <button type="button" data-status="CREATED">待拣货</button>
+              <button type="button" data-status="PICKING">拣货中</button>
+              <button type="button" data-status="SHIPPED">已发货</button>
+              <button type="button" data-status="COMPLETED">已完成</button>
+            </div>
+          </header>
+          <div class="table-wrap">
+            <table class="data-table order-table">
+              <thead>
+                <tr>
+                  <th>订单号</th>
+                  <th>客户</th>
+                  <th class="align-right">商品数</th>
+                  <th class="align-right">金额</th>
+                  <th>状态</th>
+                  <th>创建时间</th>
+                  <th class="align-right">操作</th>
+                </tr>
+              </thead>
+              <tbody id="order-table-body">
+                <tr><td colspan="7" class="empty-table">正在加载订单...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast-mark"></span>
+    <span id="toast-message"></span>
+  </div>
+
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="icon-box" viewBox="0 0 24 24">
+      <path d="m21 8-9-5-9 5 9 5 9-5Z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v9"/>
+      <path d="m21 8v9l-9 5-9-5V8"/>
+    </symbol>
+    <symbol id="icon-layout" viewBox="0 0 24 24">
+      <rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/>
+      <rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>
+    </symbol>
+    <symbol id="icon-list" viewBox="0 0 24 24">
+      <path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/>
+    </symbol>
+    <symbol id="icon-boxes" viewBox="0 0 24 24">
+      <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z"/>
+      <path d="m7 16.5-4.74-2.85M7 16.5l5-3M7 16.5v5.17"/><path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z"/>
+      <path d="m17 16.5-5-3M17 16.5l4.74-2.85M17 16.5v5.17"/><path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z"/>
+      <path d="M12 8 7.26 5.15M12 8l4.74-2.85M12 13.5V8"/>
+    </symbol>
+    <symbol id="icon-activity" viewBox="0 0 24 24">
+      <path d="M3 12h4l3-8 4 16 3-8h4"/>
+    </symbol>
+    <symbol id="icon-code" viewBox="0 0 24 24">
+      <path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/>
+    </symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24">
+      <path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+    </symbol>
+    <symbol id="icon-logout" viewBox="0 0 24 24">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>
+    </symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24">
+      <path d="M20 11a8 8 0 0 0-14.9-4M4 4v5h5M4 13a8 8 0 0 0 14.9 4M20 20v-5h-5"/>
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="icon-list" viewBox="0 0 24 24">
+      <path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/>
+    </symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24">
+      <path d="m10.3 3.9-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3.1l-8-14a2 2 0 0 0-3.4 0Z"/>
+      <path d="M12 9v4M12 17h.01"/>
+    </symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="icon-cart" viewBox="0 0 24 24">
+      <circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/>
+      <path d="M3 4h2l2.7 11.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/>
+    </symbol>
+    <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24">
+      <path d="M3 6h18M8 6V4h8v2M19 6l-1 15H6L5 6M10 11v6M14 11v6"/>
+    </symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  </svg>
+  <script src="/static/js/app.js" defer></script>
+</body>
+</html>
+

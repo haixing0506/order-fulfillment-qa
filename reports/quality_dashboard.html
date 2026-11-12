@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>履约中枢质量总览</title>
+<style>
+:root{
+  --bg:#f2f5f7;--surface:#ffffff;--ink:#17242f;--muted:#607180;
+  --line:#d8e0e6;--navy:#123047;--teal:#0d7a68;--blue:#24658f;
+  --amber:#a86414;--red:#b42318;--soft-teal:#e5f3f0;--soft-blue:#eaf2f8;
+  --soft-amber:#fbf3e6;--soft-red:#fbeceb;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 "Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+.topbar{background:var(--navy);color:#fff;padding:12px 0;border-bottom:3px solid var(--teal)}
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;font-weight:650;letter-spacing:.2px}
+.brand-mark{width:32px;height:32px;border-radius:7px;background:var(--teal);display:grid;place-items:center;font-weight:800;color:#fff}
+.nav{display:flex;gap:16px;flex-wrap:wrap;font-size:13px}
+.nav a{color:#d9e7ee}
+.hero{background:#fff;border-bottom:1px solid var(--line);padding:34px 0 28px}
+.hero-grid{display:flex;justify-content:space-between;gap:30px;align-items:flex-end;flex-wrap:wrap}
+.eyebrow{color:var(--teal);font-weight:700;font-size:12px;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:8px}
+h1{font-size:32px;line-height:1.2;margin:0 0 10px;letter-spacing:0;color:var(--navy)}
+.lead{max-width:780px;color:var(--muted);margin:0;font-size:15px}
+.stamp{text-align:right;color:var(--muted);font-size:12px;min-width:230px}
+.status-pill{display:inline-flex;align-items:center;gap:8px;background:var(--soft-amber);color:#7a4a0b;border:1px solid #e8c896;padding:7px 12px;border-radius:999px;font-weight:700;margin-bottom:8px}
+.status-dot{width:9px;height:9px;border-radius:50%;background:var(--amber)}
+main{padding:28px 0 54px}
+section{margin:0 0 26px}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px;flex-wrap:wrap}
+h2{font-size:19px;line-height:1.3;margin:0;color:var(--navy);letter-spacing:0}
+.section-note{color:var(--muted);font-size:12px;margin:0}
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:26px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--teal);border-radius:8px;padding:16px 16px 14px;min-height:118px}
+.kpi.blue{border-top-color:var(--blue)}
+.kpi.amber{border-top-color:var(--amber)}
+.kpi .label{font-size:12px;color:var(--muted);font-weight:650;min-height:18px}
+.kpi .value{font-size:27px;font-weight:750;line-height:1.15;margin:8px 0 4px;color:var(--navy);letter-spacing:0}
+.kpi .detail{font-size:12px;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 18px 16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#eef3f6;color:#34495a;text-align:left;font-weight:700;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid #e8edf0;vertical-align:top}
+tbody tr:hover{background:#f8fafb}
+.table-scroll{overflow:auto;max-height:520px;border:1px solid var(--line);border-radius:7px}
+.table-scroll table{min-width:760px}
+.badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:700;white-space:nowrap}
+.badge.ok{background:var(--soft-teal);color:#0a5c4f;border:1px solid #b9ded7}
+.badge.fail{background:var(--soft-red);color:#8f1c14;border:1px solid #efc3bf}
+.badge.warn{background:var(--soft-amber);color:#7a4a0b;border:1px solid #ead0a3}
+.badge.neutral{background:#edf1f4;color:#475b6b;border:1px solid #d4dde3}
+.progress{height:8px;background:#e8eef2;border-radius:999px;overflow:hidden;min-width:80px}
+.progress span{display:block;height:100%;border-radius:999px;background:var(--teal)}
+.progress span.blue{background:var(--blue)}
+.progress span.amber{background:var(--amber)}
+.progress span.red{background:var(--red)}
+.bar-row{display:grid;grid-template-columns:120px 1fr 58px;gap:10px;align-items:center;margin:8px 0;font-size:12px}
+.bar-row .name{color:#33495a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-row .num{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.mini-list{display:grid;gap:9px}
+.mini-item{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding-bottom:9px;border-bottom:1px solid #e8edf0}
+.mini-item:last-child{border-bottom:0;padding-bottom:0}
+.mini-title{font-weight:650;color:#273d4e;margin-bottom:2px}
+.mini-sub{font-size:12px;color:var(--muted)}
+.callout{background:var(--soft-blue);border:1px solid #c8dbe8;border-left:4px solid var(--blue);padding:12px 14px;border-radius:6px;color:#29495f;font-size:13px}
+.callout strong{color:var(--navy)}
+.evidence{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.evidence a{display:block;background:#fff;border:1px solid var(--line);border-radius:7px;padding:13px 14px;color:var(--ink);min-height:70px}
+.evidence a:hover{border-color:#9eb6c6;text-decoration:none;background:#f9fbfc}
+.evidence .link-title{font-weight:700;color:var(--blue);margin-bottom:3px}
+.evidence .link-note{font-size:12px;color:var(--muted)}
+.toolbar{display:flex;gap:10px;align-items:center;margin:0 0 12px;flex-wrap:wrap}
+.toolbar input,.toolbar select{height:34px;border:1px solid #cbd6de;border-radius:6px;padding:0 10px;background:#fff;color:var(--ink);font:13px "Segoe UI","Microsoft YaHei",sans-serif}
+.toolbar input{min-width:260px;flex:1;max-width:420px}
+.muted{color:var(--muted)}
+.small{font-size:12px}
+.danger{color:var(--red);font-weight:700}
+.good{color:var(--teal);font-weight:700}
+.footer{border-top:1px solid var(--line);padding:18px 0 30px;color:var(--muted);font-size:12px;text-align:center}
+@media (max-width:1050px){
+  .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid-3{grid-template-columns:1fr 1fr}
+  .evidence{grid-template-columns:1fr 1fr}
+}
+@media (max-width:780px){
+  .wrap{padding:0 16px}
+  h1{font-size:25px}
+  .kpis{grid-template-columns:1fr 1fr}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .stamp{text-align:left}
+  .nav{display:none}
+  .bar-row{grid-template-columns:96px 1fr 50px}
+}
+@media (max-width:480px){
+  .kpis{grid-template-columns:1fr}
+  .evidence{grid-template-columns:1fr}
+  .toolbar input{min-width:100%}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topline">
+    <div class="brand"><span class="brand-mark">QA</span><span>履约中枢 · 质量工程</span></div>
+    <nav class="nav" aria-label="页面导航">
+      <a href="#overview">概览</a><a href="#gates">质量门禁</a><a href="#execution">测试执行</a>
+      <a href="#performance">性能</a><a href="#defects">缺陷与风险</a><a href="#logs">日志</a><a href="#evidence">证据</a>
+    </nav>
+  </div>
+</header>
+<section class="hero" id="overview">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">API Quality Assurance</div>
+      <h1>订单履约平台测试质量总览</h1>
+      <p class="lead">接口自动化、边界与安全测试、并发一致性、Locust 性能基线和企业级结构化日志形成完整证据链。页面数据来自本次实际执行产物，不使用静态演示数字。</p>
+    </div>
+    <div class="stamp">
+      <div class="status-pill"><span class="status-dot"></span>发布结论：未通过</div>
+      <div>版本 order-fulfillment 1.0.0</div>
+      <div>生成时间 2026-11-12 14:32:47 UTC</div>
+      <div>最近接口执行 2026-11-12 22:29:33</div>
+    </div>
+  </div>
+</section>
+<main class="wrap">
+  <div class="kpis">
+    <div class="kpi"><div class="label">接口自动化用例</div><div class="value">60/60</div><div class="detail">pytest 全量通过</div></div>
+    <div class="kpi blue"><div class="label">语句覆盖率</div><div class="value">95.3%</div><div class="detail">目标不低于 80%</div></div>
+    <div class="kpi"><div class="label">性能吞吐</div><div class="value">82.1</div><div class="detail">RPS · 30 并发 · 40 秒</div></div>
+    <div class="kpi blue"><div class="label">性能失败请求</div><div class="value">0</div><div class="detail">3,222 次请求 · 错误率 0%</div></div>
+    <div class="kpi"><div class="label">综合 P95</div><div class="value">60.0ms</div><div class="detail">P99 81.0ms · 最大 180.0ms</div></div>
+    <div class="kpi amber"><div class="label">缺陷闭环</div><div class="value">5/7</div><div class="detail">1 待处理 · 1 已接受</div></div>
+  </div>
+
+  <section id="gates">
+    <div class="section-head"><h2>质量门禁</h2><p class="section-note">发布前必须满足的接口、覆盖率、性能、缺陷与可观测性条件</p></div>
+    <div class='table-scroll'><table><thead><tr><th>维度</th><th>指标</th><th>目标</th><th>实际</th><th>结论</th><th>说明</th></tr></thead><tbody><tr><td>接口自动化</td><td>用例通过率</td><td>100%</td><td><strong>0.0% (0/0)</strong></td><td><span class="badge fail">未达标</span></td><td class='muted'>pytest 接口、安全、并发与日志用例</td></tr><tr><td>代码覆盖率</td><td>语句覆盖率</td><td>不低于 80%</td><td><strong>95.3%</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>pytest-cov 分支统计，排除模板与静态资源</td></tr><tr><td>性能</td><td>请求错误率</td><td>低于 1%</td><td><strong>0.00%</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>Locust 30 并发、5 用户每秒、40 秒</td></tr><tr><td>性能</td><td>读接口 P95</td><td>低于 300ms</td><td><strong>37.0ms</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>GET 接口最大 P95</td></tr><tr><td>性能</td><td>写接口 P95</td><td>低于 800ms</td><td><strong>100.0ms</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>POST 与 PATCH 接口最大 P95</td></tr><tr><td>性能</td><td>吞吐量</td><td>不低于 50 RPS</td><td><strong>82.1 RPS</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>单机 SQLite 演示环境</td></tr><tr><td>稳定性</td><td>性能 ERROR 日志</td><td>0 条</td><td><strong>0 字节</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>logs/performance/error.jsonl</td></tr><tr><td>缺陷</td><td>未关闭 P0/P1</td><td>0 项</td><td><strong>0 项</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>高优先级问题必须关闭或有批准豁免</td></tr><tr><td>需求追踪</td><td>需求项执行覆盖</td><td>100%</td><td><strong>100.0% (20/20)</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>需求、用例、脚本、缺陷与风险双向关联</td></tr><tr><td>可观测性</td><td>日志脱敏自动化</td><td>全部通过</td><td><strong>通过</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>嵌套字段脱敏与查询参数脱敏用例</td></tr><tr><td>用例资产</td><td>用例台账完整度</td><td>覆盖全部自动化与性能场景</td><td><strong>66 项</strong></td><td><span class="badge ok">通过</span></td><td class='muted'>接口用例 60 项，性能场景 6 项</td></tr></tbody></table></div>
+  </section>
+
+  <section id="execution">
+    <div class="section-head"><h2>测试执行</h2><p class="section-note">JUnit、测试执行日志与用例台账交叉核对</p></div>
+    <div class="grid-2">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;margin-bottom:8px">
+          <strong>模块通过率</strong><span class="muted small">66 项用例台账 · 0.1 秒执行</span>
+        </div>
+        <div class='bar-row'><span class='name'>认证</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>8/8</span></div><div class='bar-row'><span class='name'>边界</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>8/8</span></div><div class='bar-row'><span class='name'>订单</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>13/13</span></div><div class='bar-row'><span class='name'>库存</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>1/1</span></div><div class='bar-row'><span class='name'>商品</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>8/8</span></div><div class='bar-row'><span class='name'>权限</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>5/5</span></div><div class='bar-row'><span class='name'>安全</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>9/9</span></div><div class='bar-row'><span class='name'>系统</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>4/4</span></div><div class='bar-row'><span class='name'>可观测性</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>4/4</span></div><div class='bar-row'><span class='name'>性能</span><div class="progress" role="img" aria-label="完成度 100.0%"><span class="teal" style="width:100.0%"></span></div><span class='num'>6/6</span></div>
+        <div class="callout" style="margin-top:16px"><strong>执行结论：</strong>pytest 0 项通过 0 项，失败 0 项，跳过 0 项。并发防超卖、幂等重放和日志脱敏均已纳入自动回归。</div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;margin-bottom:8px">
+          <strong>用例结构</strong><span class="muted small">按测试类型</span>
+        </div>
+        <div class='bar-row'><span class='name'>安全</span><div class="progress" role="img" aria-label="完成度 27.3%"><span class="blue" style="width:27.3%"></span></div><span class='num'>18</span></div><div class='bar-row'><span class='name'>功能</span><div class="progress" role="img" aria-label="完成度 24.2%"><span class="blue" style="width:24.2%"></span></div><span class='num'>16</span></div><div class='bar-row'><span class='name'>异常</span><div class="progress" role="img" aria-label="完成度 13.6%"><span class="blue" style="width:13.6%"></span></div><span class='num'>9</span></div><div class='bar-row'><span class='name'>边界</span><div class="progress" role="img" aria-label="完成度 12.1%"><span class="blue" style="width:12.1%"></span></div><span class='num'>8</span></div><div class='bar-row'><span class='name'>性能</span><div class="progress" role="img" aria-label="完成度 7.6%"><span class="blue" style="width:7.6%"></span></div><span class='num'>5</span></div><div class='bar-row'><span class='name'>可观测性</span><div class="progress" role="img" aria-label="完成度 6.1%"><span class="blue" style="width:6.1%"></span></div><span class='num'>4</span></div><div class='bar-row'><span class='name'>契约</span><div class="progress" role="img" aria-label="完成度 6.1%"><span class="blue" style="width:6.1%"></span></div><span class='num'>4</span></div><div class='bar-row'><span class='name'>并发</span><div class="progress" role="img" aria-label="完成度 1.5%"><span class="blue" style="width:1.5%"></span></div><span class='num'>1</span></div><div class='bar-row'><span class='name'>稳定性</span><div class="progress" role="img" aria-label="完成度 1.5%"><span class="blue" style="width:1.5%"></span></div><span class='num'>1</span></div>
+        <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;margin:18px 0 8px"><strong>最慢用例</strong><span class="muted small">执行日志</span></div>
+        <table><thead><tr><th>用例</th><th>脚本</th><th>耗时</th></tr></thead><tbody><tr><td colspan='3' class='muted'>暂无执行记录</td></tr></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <section id="coverage">
+    <div class="section-head"><h2>代码覆盖率</h2><p class="section-note">pytest-cov 语句与分支统计，展示覆盖率最低的核心文件</p></div>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <div><div class="muted small">总体语句覆盖率</div><div style="font-size:30px;font-weight:750;color:var(--navy)">95.3%</div></div>
+        <div style="min-width:260px;flex:1;max-width:520px"><div class="progress" role="img" aria-label="完成度 95.3%"><span class="teal" style="width:95.3%"></span></div><div class="muted small" style="margin-top:6px">已覆盖 836 行 · 缺失 32 行 · 统计 868 行</div></div>
+      </div>
+      <div class='table-scroll'><table><thead><tr><th>文件</th><th>覆盖率</th><th>比例</th><th>缺失语句</th></tr></thead><tbody><tr><td><code>app/config.py</code></td><td><div class="progress" role="img" aria-label="完成度 87.2%"><span class="teal" style="width:87.2%"></span></div></td><td>87.2%</td><td>4</td></tr><tr><td><code>app/security.py</code></td><td><div class="progress" role="img" aria-label="完成度 91.1%"><span class="teal" style="width:91.1%"></span></div></td><td>91.1%</td><td>5</td></tr><tr><td><code>app/observability/middleware.py</code></td><td><div class="progress" role="img" aria-label="完成度 92.9%"><span class="teal" style="width:92.9%"></span></div></td><td>92.9%</td><td>4</td></tr><tr><td><code>app/main.py</code></td><td><div class="progress" role="img" aria-label="完成度 93.2%"><span class="teal" style="width:93.2%"></span></div></td><td>93.2%</td><td>5</td></tr><tr><td><code>app/services/orders.py</code></td><td><div class="progress" role="img" aria-label="完成度 93.6%"><span class="teal" style="width:93.6%"></span></div></td><td>93.6%</td><td>6</td></tr><tr><td><code>app/observability/context.py</code></td><td><div class="progress" role="img" aria-label="完成度 93.8%"><span class="teal" style="width:93.8%"></span></div></td><td>93.8%</td><td>2</td></tr><tr><td><code>app/errors.py</code></td><td><div class="progress" role="img" aria-label="完成度 95.7%"><span class="teal" style="width:95.7%"></span></div></td><td>95.7%</td><td>1</td></tr><tr><td><code>app/services/catalog.py</code></td><td><div class="progress" role="img" aria-label="完成度 95.7%"><span class="teal" style="width:95.7%"></span></div></td><td>95.7%</td><td>2</td></tr><tr><td><code>app/observability/logging.py</code></td><td><div class="progress" role="img" aria-label="完成度 97.0%"><span class="teal" style="width:97.0%"></span></div></td><td>97.0%</td><td>2</td></tr><tr><td><code>app/database.py</code></td><td><div class="progress" role="img" aria-label="完成度 97.4%"><span class="teal" style="width:97.4%"></span></div></td><td>97.4%</td><td>1</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <section id="performance">
+    <div class="section-head"><h2>性能基线</h2><p class="section-note">Locust 混合读写、幂等重放、状态流转与登录流量</p></div>
+    <div class="panel">
+      <div class="grid-3" style="margin-bottom:16px">
+        <div><div class="muted small">请求与失败</div><div style="font-size:24px;font-weight:750;color:var(--navy)">3,222 / 0</div><div class="muted small">请求数 / 失败数</div></div>
+        <div><div class="muted small">延迟分位</div><div style="font-size:24px;font-weight:750;color:var(--navy)">P50 12 · P95 60</div><div class="muted small">P99 81ms</div></div>
+        <div><div class="muted small">压测编排</div><div style="font-size:24px;font-weight:750;color:var(--navy)">exit 0</div><div class="muted small">2026-11-12 03:49:40 · 42.8 秒</div></div>
+      </div>
+      <div class='table-scroll'><table><thead><tr><th>方法</th><th>接口</th><th>请求数</th><th>失败</th><th>RPS</th><th>P50</th><th>P95</th><th>P99</th><th>最大</th><th>P95 对比</th></tr></thead><tbody><tr><td><code>POST</code></td><td>POST /api/v1/auth/login</td><td>169</td><td>0</td><td>4.31</td><td>63</td><td>100</td><td>120</td><td>120.0</td><td><div class='progress'><span class='teal' style='width:100.0%'></span></div></td></tr><tr><td><code>POST</code></td><td>POST /api/v1/auth/login[invalid]</td><td>60</td><td>0</td><td>1.53</td><td>60</td><td>78</td><td>94</td><td>94.0</td><td><div class='progress'><span class='teal' style='width:78.0%'></span></div></td></tr><tr><td><code>POST</code></td><td>POST /api/v1/orders</td><td>838</td><td>0</td><td>21.35</td><td>15</td><td>50</td><td>66</td><td>180.0</td><td><div class='progress'><span class='teal' style='width:50.0%'></span></div></td></tr><tr><td><code>POST</code></td><td>POST /api/v1/orders/{id}/cancel</td><td>553</td><td>0</td><td>14.09</td><td>11</td><td>41</td><td>54</td><td>75.0</td><td><div class='progress'><span class='teal' style='width:41.0%'></span></div></td></tr><tr><td><code>PATCH</code></td><td>PATCH /api/v1/orders/{id}/status</td><td>384</td><td>0</td><td>9.79</td><td>11</td><td>39</td><td>58</td><td>79.0</td><td><div class='progress'><span class='teal' style='width:39.0%'></span></div></td></tr><tr><td><code>GET</code></td><td>GET /api/v1/products</td><td>478</td><td>0</td><td>12.18</td><td>9</td><td>37</td><td>49</td><td>150.0</td><td><div class='progress'><span class='teal' style='width:37.0%'></span></div></td></tr><tr><td><code>GET</code></td><td>GET /api/v1/orders</td><td>156</td><td>0</td><td>3.98</td><td>9</td><td>36</td><td>47</td><td>51.0</td><td><div class='progress'><span class='teal' style='width:36.0%'></span></div></td></tr><tr><td><code>GET</code></td><td>GET /api/v1/dashboard/summary</td><td>269</td><td>0</td><td>6.85</td><td>8</td><td>34</td><td>38</td><td>50.0</td><td><div class='progress'><span class='teal' style='width:34.0%'></span></div></td></tr><tr><td><code>GET</code></td><td>GET /api/v1/products/{id}</td><td>233</td><td>0</td><td>5.94</td><td>8</td><td>34</td><td>49</td><td>180.0</td><td><div class='progress'><span class='teal' style='width:34.0%'></span></div></td></tr><tr><td><code>GET</code></td><td>GET /health/live</td><td>82</td><td>0</td><td>2.09</td><td>4</td><td>6</td><td>14</td><td>14.0</td><td><div class='progress'><span class='teal' style='width:6.0%'></span></div></td></tr></tbody></table></div>
+      <div class="callout" style="margin-top:14px"><strong>结论：</strong>读接口最大 P95 37.0ms，写接口最大 P95 100.0ms，均低于 SLO。性能隔离日志中 error.jsonl 为 0 字节，访问日志 6,437 条，审计日志 3,705 条。当前结论为 通过。</div>
+    </div>
+  </section>
+
+  <section id="defects">
+    <div class="section-head"><h2>缺陷与风险</h2><p class="section-note">缺陷状态、修复证据和发布前风险处置</p></div>
+    <div class="grid-2">
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;margin-bottom:8px"><strong>缺陷台账</strong><span class="muted small">7 项 · 未关闭 1 项 · 已接受 1 项</span></div>
+        <div class='bar-row'><span class='name'>已关闭</span><div class="progress" role="img" aria-label="完成度 71.4%"><span class="teal" style="width:71.4%"></span></div><span class='num'>5</span></div><div class='bar-row'><span class='name'>待处理</span><div class="progress" role="img" aria-label="完成度 14.3%"><span class="amber" style="width:14.3%"></span></div><span class='num'>1</span></div><div class='bar-row'><span class='name'>已接受</span><div class="progress" role="img" aria-label="完成度 14.3%"><span class="amber" style="width:14.3%"></span></div><span class='num'>1</span></div>
+        <div style="margin-top:14px"><div class='table-scroll'><table><thead><tr><th>编号</th><th>标题</th><th>级别</th><th>状态</th><th>处置</th></tr></thead><tbody><tr><td><strong>BUG-006</strong></td><td>登录接口未内置频率限制与账户锁定</td><td>中</td><td><span class='badge warn'>待处理</span></td><td class='muted'>建议在网关增加 IP+账号维度限流和失败锁定；应用层增加审计告警</td></tr><tr><td><strong>BUG-007</strong></td><td>viewer 可查看全量订单而非仅本人订单</td><td>低</td><td><span class='badge neutral'>已接受</span></td><td class='muted'>保持现状；后续如开放客户自助端需增加数据域隔离</td></tr></tbody></table></div></div>
+      </div>
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;gap:16px;align-items:baseline;margin-bottom:8px"><strong>高风险项</strong><span class="muted small">10 项风险 · 未缓解高风险 1 项</span></div>
+        <div class='table-scroll'><table><thead><tr><th>编号</th><th>风险</th><th>分值</th><th>状态</th><th>缓解措施</th></tr></thead><tbody><tr><td><strong>RISK-001</strong></td><td>高并发下单时库存可能被超卖</td><td>12</td><td><span class='badge ok'>已缓解</span></td><td class='muted'>使用 BEGIN IMMEDIATE 事务与条件更新；增加 10 线程并发自动化用例</td></tr><tr><td><strong>RISK-002</strong></td><td>同一幂等键重复提交可能创建重复订单</td><td>12</td><td><span class='badge ok'>已缓解</span></td><td class='muted'>用户级唯一约束；比对 request_hash；自动化覆盖重放与冲突场景</td></tr><tr><td><strong>RISK-004</strong></td><td>敏感信息可能进入访问日志或异常日志</td><td>12</td><td><span class='badge ok'>已缓解</span></td><td class='muted'>统一 sanitize；查询参数脱敏；自动化日志断言</td></tr><tr><td><strong>RISK-006</strong></td><td>SQLite 写锁导致高并发下延迟抖动</td><td>12</td><td><span class='badge warn'>监控中</span></td><td class='muted'>WAL、busy_timeout、短事务；性能基线持续观察</td></tr></tbody></table></div>
+        <div class="callout" style="margin-top:14px"><strong>发布建议：</strong>接口回归与性能基线达标，可进入发布评审。BUG-006 需在网关或 WAF 完成登录限流后关闭；BUG-007 已获产品负责人接受。</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="logs">
+    <div class="section-head"><h2>企业日志证据</h2><p class="section-note">JSON Lines、请求关联、审计追溯、安全事件与脱敏验证</p></div>
+    <div class="panel">
+      <div class="grid-3">
+        <div><div class="muted small">性能访问日志</div><div style="font-size:25px;font-weight:750;color:var(--navy)">6,437</div><div class="muted small">http_request 事件</div></div>
+        <div><div class="muted small">性能审计日志</div><div style="font-size:25px;font-weight:750;color:var(--navy)">3,705</div><div class="muted small">订单与登录业务动作</div></div>
+        <div><div class="muted small">性能安全日志</div><div style="font-size:25px;font-weight:750;color:var(--navy)">117</div><div class="muted small">失败登录与权限事件</div></div>
+      </div>
+      <div class="callout" style="margin-top:16px"><strong>可观测性结论：</strong>所有 HTTP 请求均写入 request_id、trace_id、method、path、status 和 duration；订单创建、状态变更和取消写入审计日志；错误日志 0 字节；嵌套密钥与查询参数脱敏用例通过。按 request_id 可以从访问日志追到业务日志、审计日志和安全日志。</div>
+    </div>
+  </section>
+
+  <section id="cases">
+    <div class="section-head"><h2>测试用例台账</h2><p class="section-note">共 66 项，支持按模块筛选和关键字检索</p></div>
+    <div class="panel">
+      <div class="toolbar">
+        <input id="caseSearch" type="search" placeholder="搜索用例编号、场景或测试类型" aria-label="搜索测试用例">
+        <select id="moduleFilter" aria-label="按模块筛选"><option value="">全部模块</option><option value='可观测性'>可观测性</option><option value='商品'>商品</option><option value='安全'>安全</option><option value='库存'>库存</option><option value='性能'>性能</option><option value='权限'>权限</option><option value='系统'>系统</option><option value='订单'>订单</option><option value='认证'>认证</option><option value='边界'>边界</option></select>
+        <span id="caseCount" class="muted small"></span>
+      </div>
+      <div class="table-scroll">
+        <table id="caseTable"><thead><tr><th>用例编号</th><th>模块</th><th>场景</th><th>优先级</th><th>类型</th><th>状态</th><th>自动化脚本</th></tr></thead><tbody><tr data-module='认证' data-text='TC-AUTH-001 认证 管理员登录成功并返回令牌与用户信息 功能'><td><strong>TC-AUTH-001</strong></td><td>认证</td><td>管理员登录成功并返回令牌与用户信息</td><td>P0</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_auth.py::test_admin_login_returns_token_and_profile</code></td></tr><tr data-module='认证' data-text='TC-AUTH-002 认证 错误密码与不存在用户返回一致失败信息 安全'><td><strong>TC-AUTH-002</strong></td><td>认证</td><td>错误密码与不存在用户返回一致失败信息</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_auth.py::test_login_rejects_wrong_password_without_user_enumeration</code></td></tr><tr data-module='认证' data-text='TC-AUTH-003 认证 登录密码长度不足时拒绝请求 异常'><td><strong>TC-AUTH-003</strong></td><td>认证</td><td>登录密码长度不足时拒绝请求</td><td>P2</td><td>异常</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_auth.py::test_login_validates_short_password</code></td></tr><tr data-module='认证' data-text='TC-AUTH-004 认证 未携带Bearer令牌访问个人信息被拒绝 安全'><td><strong>TC-AUTH-004</strong></td><td>认证</td><td>未携带Bearer令牌访问个人信息被拒绝</td><td>P1</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_auth.py::test_me_requires_bearer_token</code></td></tr><tr data-module='认证' data-text='TC-AUTH-005 认证 过期JWT访问受保护接口被拒绝 安全'><td><strong>TC-AUTH-005</strong></td><td>认证</td><td>过期JWT访问受保护接口被拒绝</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_auth.py::test_expired_token_is_rejected</code></td></tr><tr data-module='认证' data-text='TC-AUTH-006 认证 篡改JWT签名后访问被拒绝 安全'><td><strong>TC-AUTH-006</strong></td><td>认证</td><td>篡改JWT签名后访问被拒绝</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_auth.py::test_tampered_token_signature_is_rejected</code></td></tr><tr data-module='认证' data-text='TC-AUTH-007 认证 JWT声明包含用户身份与有效期 功能'><td><strong>TC-AUTH-007</strong></td><td>认证</td><td>JWT声明包含用户身份与有效期</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_auth.py::test_token_contains_expected_claims</code></td></tr><tr data-module='认证' data-text='TC-AUTH-008 认证 未知用户登录仍执行等价密码校验 安全'><td><strong>TC-AUTH-008</strong></td><td>认证</td><td>未知用户登录仍执行等价密码校验</td><td>P1</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_auth.py::test_unknown_user_still_runs_password_verification</code></td></tr><tr data-module='边界' data-text='TC-BND-001 边界 订单单项数量上限99可成功创建 边界'><td><strong>TC-BND-001</strong></td><td>边界</td><td>订单单项数量上限99可成功创建</td><td>P1</td><td>边界</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_boundaries.py::test_order_quantity_upper_boundary_is_accepted</code></td></tr><tr data-module='边界' data-text='TC-BND-002 边界 订单单项数量超过99被拒绝 边界'><td><strong>TC-BND-002</strong></td><td>边界</td><td>订单单项数量超过99被拒绝</td><td>P1</td><td>边界</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_boundaries.py::test_order_quantity_above_upper_boundary_is_rejected</code></td></tr><tr data-module='边界' data-text='TC-BND-003 边界 同一商品重复行合并后执行数量上限校验 边界'><td><strong>TC-BND-003</strong></td><td>边界</td><td>同一商品重复行合并后执行数量上限校验</td><td>P1</td><td>边界</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_boundaries.py::test_duplicate_lines_are_merged_before_quantity_limit</code></td></tr><tr data-module='边界' data-text='TC-BND-004 边界 订单备注长度200可接受且201被拒绝 边界'><td><strong>TC-BND-004</strong></td><td>边界</td><td>订单备注长度200可接受且201被拒绝</td><td>P2</td><td>边界</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_boundaries.py::test_remark_length_boundaries</code></td></tr><tr data-module='边界' data-text='TC-BND-005 边界 商品分页参数边界校验 边界'><td><strong>TC-BND-005</strong></td><td>边界</td><td>商品分页参数边界校验</td><td>P2</td><td>边界</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_boundaries.py::test_pagination_size_and_page_boundaries</code></td></tr><tr data-module='边界' data-text='TC-BND-006 边界 库存下界0触发低库存标记 边界'><td><strong>TC-BND-006</strong></td><td>边界</td><td>库存下界0触发低库存标记</td><td>P2</td><td>边界</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_boundaries.py::test_stock_lower_boundary_marks_low_stock</code></td></tr><tr data-module='边界' data-text='TC-BND-007 边界 库存上限1000000可接受且超限被拒绝 边界'><td><strong>TC-BND-007</strong></td><td>边界</td><td>库存上限1000000可接受且超限被拒绝</td><td>P2</td><td>边界</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_boundaries.py::test_stock_upper_boundary_validation</code></td></tr><tr data-module='边界' data-text='TC-BND-008 边界 商品价格下界校验 边界'><td><strong>TC-BND-008</strong></td><td>边界</td><td>商品价格下界校验</td><td>P2</td><td>边界</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_boundaries.py::test_product_price_boundaries</code></td></tr><tr data-module='订单' data-text='TC-ORD-001 订单 创建订单由服务端计价并扣减库存 功能'><td><strong>TC-ORD-001</strong></td><td>订单</td><td>创建订单由服务端计价并扣减库存</td><td>P0</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_create_order_calculates_server_side_total_and_deducts_stock</code></td></tr><tr data-module='订单' data-text='TC-ORD-002 订单 相同幂等键重放返回原订单且不重复扣库存 功能'><td><strong>TC-ORD-002</strong></td><td>订单</td><td>相同幂等键重放返回原订单且不重复扣库存</td><td>P0</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_idempotency_key_replay_returns_same_order</code></td></tr><tr data-module='订单' data-text='TC-ORD-003 订单 相同幂等键提交不同内容被拒绝 异常'><td><strong>TC-ORD-003</strong></td><td>订单</td><td>相同幂等键提交不同内容被拒绝</td><td>P0</td><td>异常</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_same_idempotency_key_with_different_payload_is_rejected</code></td></tr><tr data-module='订单' data-text='TC-ORD-004 订单 库存不足时创建订单返回冲突 异常'><td><strong>TC-ORD-004</strong></td><td>订单</td><td>库存不足时创建订单返回冲突</td><td>P0</td><td>异常</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_insufficient_stock_returns_conflict</code></td></tr><tr data-module='订单' data-text='TC-ORD-005 订单 订单商品数量为0时校验失败 异常'><td><strong>TC-ORD-005</strong></td><td>订单</td><td>订单商品数量为0时校验失败</td><td>P1</td><td>异常</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_invalid_item_quantity_is_rejected</code></td></tr><tr data-module='订单' data-text='TC-ORD-006 订单 订单引用不存在商品返回404 异常'><td><strong>TC-ORD-006</strong></td><td>订单</td><td>订单引用不存在商品返回404</td><td>P1</td><td>异常</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_unknown_product_in_order_returns_404</code></td></tr><tr data-module='订单' data-text='TC-ORD-007 订单 取消订单回补库存且重复取消不重复回补 功能'><td><strong>TC-ORD-007</strong></td><td>订单</td><td>取消订单回补库存且重复取消不重复回补</td><td>P0</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_cancel_order_restores_stock_once</code></td></tr><tr data-module='订单' data-text='TC-ORD-008 订单 订单按CREATED到COMPLETED完整流转 功能'><td><strong>TC-ORD-008</strong></td><td>订单</td><td>订单按CREATED到COMPLETED完整流转</td><td>P0</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_valid_status_transition_chain</code></td></tr><tr data-module='订单' data-text='TC-ORD-009 订单 跳过中间状态直接完成被拒绝 异常'><td><strong>TC-ORD-009</strong></td><td>订单</td><td>跳过中间状态直接完成被拒绝</td><td>P0</td><td>异常</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_skipping_status_is_rejected</code></td></tr><tr data-module='订单' data-text='TC-ORD-010 订单 已发货订单不可取消 异常'><td><strong>TC-ORD-010</strong></td><td>订单</td><td>已发货订单不可取消</td><td>P1</td><td>异常</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_shipped_order_cannot_be_cancelled</code></td></tr><tr data-module='订单' data-text='TC-ORD-011 订单 订单列表支持状态筛选 功能'><td><strong>TC-ORD-011</strong></td><td>订单</td><td>订单列表支持状态筛选</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_order_list_supports_status_filter</code></td></tr><tr data-module='订单' data-text='TC-ORD-012 订单 订单详情查询与不存在订单处理 功能'><td><strong>TC-ORD-012</strong></td><td>订单</td><td>订单详情查询与不存在订单处理</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_order_detail_and_404</code></td></tr><tr data-module='订单' data-text='TC-ORD-013 订单 幂等键按用户隔离 功能'><td><strong>TC-ORD-013</strong></td><td>订单</td><td>幂等键按用户隔离</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_idempotency_keys_are_scoped_by_user</code></td></tr><tr data-module='库存' data-text='TC-INV-001 库存 并发下单不发生超卖 并发'><td><strong>TC-INV-001</strong></td><td>库存</td><td>并发下单不发生超卖</td><td>P0</td><td>并发</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_orders.py::test_concurrent_orders_do_not_oversell</code></td></tr><tr data-module='商品' data-text='TC-PRD-001 商品 未认证访问商品列表被拒绝 安全'><td><strong>TC-PRD-001</strong></td><td>商品</td><td>未认证访问商品列表被拒绝</td><td>P1</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_products.py::test_product_list_requires_authentication</code></td></tr><tr data-module='商品' data-text='TC-PRD-002 商品 商品列表返回完整种子数据与分类 功能'><td><strong>TC-PRD-002</strong></td><td>商品</td><td>商品列表返回完整种子数据与分类</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_products.py::test_product_list_returns_seeded_catalog</code></td></tr><tr data-module='商品' data-text='TC-PRD-003 商品 中文关键字搜索命中指定商品 功能'><td><strong>TC-PRD-003</strong></td><td>商品</td><td>中文关键字搜索命中指定商品</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_products.py::test_product_search_matches_chinese_name</code></td></tr><tr data-module='商品' data-text='TC-PRD-004 商品 搜索参数中的SQL元字符按普通文本处理 安全'><td><strong>TC-PRD-004</strong></td><td>商品</td><td>搜索参数中的SQL元字符按普通文本处理</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_products.py::test_product_search_treats_sql_metacharacters_as_text</code></td></tr><tr data-module='商品' data-text='TC-PRD-005 商品 商品分页与分类筛选组合有效 功能'><td><strong>TC-PRD-005</strong></td><td>商品</td><td>商品分页与分类筛选组合有效</td><td>P2</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_products.py::test_product_pagination_and_category_filter</code></td></tr><tr data-module='商品' data-text='TC-PRD-006 商品 查询不存在商品返回结构化404 异常'><td><strong>TC-PRD-006</strong></td><td>商品</td><td>查询不存在商品返回结构化404</td><td>P2</td><td>异常</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_products.py::test_missing_product_returns_structured_404</code></td></tr><tr data-module='商品' data-text='TC-PRD-007 商品 管理员创建商品且重复SKU被拒绝 功能'><td><strong>TC-PRD-007</strong></td><td>商品</td><td>管理员创建商品且重复SKU被拒绝</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_products.py::test_admin_can_create_product_and_duplicate_sku_is_rejected</code></td></tr><tr data-module='商品' data-text='TC-PRD-008 商品 管理员更新库存后低库存状态持久化 功能'><td><strong>TC-PRD-008</strong></td><td>商品</td><td>管理员更新库存后低库存状态持久化</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_products.py::test_admin_stock_update_marks_low_stock</code></td></tr><tr data-module='权限' data-text='TC-RBAC-001 权限 viewer角色不能创建订单 安全'><td><strong>TC-RBAC-001</strong></td><td>权限</td><td>viewer角色不能创建订单</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_permissions.py::test_viewer_cannot_create_order</code></td></tr><tr data-module='权限' data-text='TC-RBAC-002 权限 operator角色不能维护商品主数据 安全'><td><strong>TC-RBAC-002</strong></td><td>权限</td><td>operator角色不能维护商品主数据</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_permissions.py::test_operator_cannot_manage_catalog</code></td></tr><tr data-module='权限' data-text='TC-RBAC-003 权限 viewer角色可查看订单列表 功能'><td><strong>TC-RBAC-003</strong></td><td>权限</td><td>viewer角色可查看订单列表</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_permissions.py::test_viewer_can_read_orders</code></td></tr><tr data-module='权限' data-text='TC-RBAC-004 权限 viewer角色不能修改订单状态 安全'><td><strong>TC-RBAC-004</strong></td><td>权限</td><td>viewer角色不能修改订单状态</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_permissions.py::test_viewer_cannot_change_order_status</code></td></tr><tr data-module='权限' data-text='TC-RBAC-005 权限 admin角色可以取消订单 功能'><td><strong>TC-RBAC-005</strong></td><td>权限</td><td>admin角色可以取消订单</td><td>P1</td><td>功能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_permissions.py::test_admin_can_cancel_order</code></td></tr><tr data-module='安全' data-text='TC-SEC-001 安全 接口响应包含安全响应头 安全'><td><strong>TC-SEC-001</strong></td><td>安全</td><td>接口响应包含安全响应头</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_security.py::test_security_headers_are_present</code></td></tr><tr data-module='安全' data-text='TC-SEC-002 安全 合法请求ID在响应头与响应体中透传 可观测性'><td><strong>TC-SEC-002</strong></td><td>安全</td><td>合法请求ID在响应头与响应体中透传</td><td>P1</td><td>可观测性</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_security.py::test_request_id_is_propagated</code></td></tr><tr data-module='安全' data-text='TC-SEC-003 安全 用户信息接口不泄露密码哈希与令牌 安全'><td><strong>TC-SEC-003</strong></td><td>安全</td><td>用户信息接口不泄露密码哈希与令牌</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_security.py::test_password_hash_is_never_exposed</code></td></tr><tr data-module='安全' data-text='TC-SEC-004 安全 订单请求体未知字段被拒绝 安全'><td><strong>TC-SEC-004</strong></td><td>安全</td><td>订单请求体未知字段被拒绝</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_security.py::test_unknown_field_in_order_is_rejected</code></td></tr><tr data-module='安全' data-text='TC-SEC-005 安全 畸形JSON返回受控错误且不泄露堆栈 安全'><td><strong>TC-SEC-005</strong></td><td>安全</td><td>畸形JSON返回受控错误且不泄露堆栈</td><td>P1</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_security.py::test_malformed_json_returns_controlled_error</code></td></tr><tr data-module='安全' data-text='TC-SEC-006 安全 未知路由返回结构化错误 异常'><td><strong>TC-SEC-006</strong></td><td>安全</td><td>未知路由返回结构化错误</td><td>P2</td><td>异常</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_security.py::test_unknown_route_uses_structured_error</code></td></tr><tr data-module='安全' data-text='TC-SEC-007 安全 viewer不能通过请求体提升角色 安全'><td><strong>TC-SEC-007</strong></td><td>安全</td><td>viewer不能通过请求体提升角色</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_security.py::test_viewer_token_cannot_escalate_role_through_request_body</code></td></tr><tr data-module='安全' data-text='TC-SEC-008 安全 非法请求ID被替换且合法请求ID被接受 安全'><td><strong>TC-SEC-008</strong></td><td>安全</td><td>非法请求ID被替换且合法请求ID被接受</td><td>P1</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_security.py::test_unsafe_request_id_is_replaced</code></td></tr><tr data-module='安全' data-text='TC-SEC-009 安全 访问日志中的敏感查询参数被脱敏 安全'><td><strong>TC-SEC-009</strong></td><td>安全</td><td>访问日志中的敏感查询参数被脱敏</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_security.py::test_sensitive_query_value_is_masked_in_access_log</code></td></tr><tr data-module='系统' data-text='TC-SYS-001 系统 健康检查存活与就绪探针可用 契约'><td><strong>TC-SYS-001</strong></td><td>系统</td><td>健康检查存活与就绪探针可用</td><td>P0</td><td>契约</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_contract.py::test_health_live_and_ready</code></td></tr><tr data-module='系统' data-text='TC-SYS-002 系统 成功响应统一信封契约 契约'><td><strong>TC-SYS-002</strong></td><td>系统</td><td>成功响应统一信封契约</td><td>P1</td><td>契约</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_contract.py::test_success_envelope_contract</code></td></tr><tr data-module='系统' data-text='TC-SYS-003 系统 错误响应统一信封契约 契约'><td><strong>TC-SYS-003</strong></td><td>系统</td><td>错误响应统一信封契约</td><td>P1</td><td>契约</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_contract.py::test_error_envelope_contract</code></td></tr><tr data-module='系统' data-text='TC-SYS-004 系统 履约看板汇总数据契约 契约'><td><strong>TC-SYS-004</strong></td><td>系统</td><td>履约看板汇总数据契约</td><td>P2</td><td>契约</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_contract.py::test_dashboard_summary_contract</code></td></tr><tr data-module='可观测性' data-text='TC-OBS-001 可观测性 访问日志可通过请求ID关联完整HTTP信息 可观测性'><td><strong>TC-OBS-001</strong></td><td>可观测性</td><td>访问日志可通过请求ID关联完整HTTP信息</td><td>P1</td><td>可观测性</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_observability.py::test_access_log_correlates_request_id</code></td></tr><tr data-module='可观测性' data-text='TC-OBS-002 可观测性 创建订单写入业务审计日志 可观测性'><td><strong>TC-OBS-002</strong></td><td>可观测性</td><td>创建订单写入业务审计日志</td><td>P0</td><td>可观测性</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_observability.py::test_audit_log_records_order_creation</code></td></tr><tr data-module='可观测性' data-text='TC-OBS-003 可观测性 登录失败写入安全日志 可观测性'><td><strong>TC-OBS-003</strong></td><td>可观测性</td><td>登录失败写入安全日志</td><td>P1</td><td>可观测性</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_observability.py::test_security_log_records_failed_login</code></td></tr><tr data-module='可观测性' data-text='TC-OBS-004 可观测性 日志脱敏覆盖嵌套对象与文本 安全'><td><strong>TC-OBS-004</strong></td><td>可观测性</td><td>日志脱敏覆盖嵌套对象与文本</td><td>P0</td><td>安全</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>tests/api/test_observability.py::test_log_sanitizer_masks_nested_secrets</code></td></tr><tr data-module='性能' data-text='PERF-001 性能 混合读接口负载满足吞吐与延迟目标 性能'><td><strong>PERF-001</strong></td><td>性能</td><td>混合读接口负载满足吞吐与延迟目标</td><td>P1</td><td>性能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>performance/locustfile.py::ReadUser</code></td></tr><tr data-module='性能' data-text='PERF-002 性能 创建订单与取消订单事务负载稳定 性能'><td><strong>PERF-002</strong></td><td>性能</td><td>创建订单与取消订单事务负载稳定</td><td>P1</td><td>性能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>performance/locustfile.py::WriteUser.create_and_cancel</code></td></tr><tr data-module='性能' data-text='PERF-003 性能 幂等重放在高并发下保持订单一致 性能'><td><strong>PERF-003</strong></td><td>性能</td><td>幂等重放在高并发下保持订单一致</td><td>P1</td><td>性能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>performance/locustfile.py::WriteUser.idempotent_replay</code></td></tr><tr data-module='性能' data-text='PERF-004 性能 履约状态流转在持续负载下正确 性能'><td><strong>PERF-004</strong></td><td>性能</td><td>履约状态流转在持续负载下正确</td><td>P1</td><td>性能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>performance/locustfile.py::WriteUser.fulfilment_chain</code></td></tr><tr data-module='性能' data-text='PERF-005 性能 登录成功与失败混合流量稳定 性能'><td><strong>PERF-005</strong></td><td>性能</td><td>登录成功与失败混合流量稳定</td><td>P2</td><td>性能</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>performance/locustfile.py::AuthUser</code></td></tr><tr data-module='性能' data-text='PERF-006 性能 持续负载下健康检查与错误日志稳定 稳定性'><td><strong>PERF-006</strong></td><td>性能</td><td>持续负载下健康检查与错误日志稳定</td><td>P2</td><td>稳定性</td><td><span class='badge ok'>通过</span></td><td class='muted'><code>scripts/run_performance.py</code></td></tr></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <section id="evidence">
+    <div class="section-head"><h2>交付证据</h2><p class="section-note">可直接打开的原始终端与报告文件</p></div>
+    <div class="evidence">
+      <a href="test-report.html"><div class="link-title">pytest HTML 报告</div><div class="link-note">用例级执行详情与失败摘要</div></a>
+      <a href="test-results.xml"><div class="link-title">JUnit XML</div><div class="link-note">CI 可解析的接口测试结果</div></a>
+      <a href="coverage/index.html"><div class="link-title">覆盖率 HTML</div><div class="link-note">逐文件语句与分支覆盖</div></a>
+      <a href="performance/locust-report.html"><div class="link-title">Locust HTML 报告</div><div class="link-note">吞吐、延迟分位与接口分布</div></a>
+      <a href="performance/locust_stats.csv"><div class="link-title">性能统计 CSV</div><div class="link-note">接口级请求、失败与分位数据</div></a>
+      <a href="quality_summary.json"><div class="link-title">质量汇总 JSON</div><div class="link-note">门禁结果与机器可读指标</div></a>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="wrap">履约中枢质量工程 · 接口自动化与企业级日志演示 · 数据生成于 2026-11-12T14:32:47+00:00</div></footer>
+<script>
+(function(){
+  const input=document.getElementById('caseSearch');
+  const select=document.getElementById('moduleFilter');
+  const rows=Array.from(document.querySelectorAll('#caseTable tbody tr'));
+  const count=document.getElementById('caseCount');
+  function apply(){
+    const term=(input.value||'').trim().toLowerCase();
+    const module=(select.value||'').trim();
+    let visible=0;
+    rows.forEach(function(row){
+      const text=(row.getAttribute('data-text')||'').toLowerCase();
+      const rowModule=row.getAttribute('data-module')||'';
+      const okText=!term||text.indexOf(term)>=0;
+      const okModule=!module||rowModule===module;
+      const show=okText&&okModule;
+      row.style.display=show?'':'none';
+      if(show) visible++;
+    });
+    count.textContent='显示 '+visible+' / '+rows.length+' 项';
+  }
+  input.addEventListener('input',apply);
+  select.addEventListener('change',apply);
+  apply();
+})();
+</script>
+</body>
+</html>

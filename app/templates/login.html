@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>登录 | 履约中枢</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="login-body">
+  <main class="login-shell">
+    <section class="login-brand">
+      <div class="brand-lockup">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><use href="#icon-box"></use></svg>
+        </span>
+        <span class="brand-name">履约中枢</span>
+        <span class="brand-version">v{{ app_version }}</span>
+      </div>
+      <div class="login-brand-copy">
+        <p class="eyebrow">ORDER FULFILLMENT</p>
+        <h1>每一笔订单，<br>都有清晰去向。</h1>
+        <p class="brand-description">连接库存、订单与履约动作，让业务状态可追踪，让质量风险可度量。</p>
+      </div>
+      <dl class="login-metrics">
+        <div>
+          <dt>服务可用性</dt>
+          <dd>99.95%</dd>
+        </div>
+        <div>
+          <dt>订单追踪</dt>
+          <dd>全链路</dd>
+        </div>
+        <div>
+          <dt>审计留痕</dt>
+          <dd>结构化</dd>
+        </div>
+      </dl>
+      <p class="login-footnote">Quality Engineering Portfolio · 2026</p>
+    </section>
+
+    <section class="login-panel">
+      <div class="login-form-wrap">
+        <header class="login-header">
+          <p class="section-kicker">工作台登录</p>
+          <h2>欢迎回来</h2>
+          <p>使用企业账号进入履约工作台。</p>
+        </header>
+
+        <form id="login-form" class="login-form" novalidate>
+          <div class="field">
+            <label for="username">账号</label>
+            <div class="input-shell">
+              <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-user"></use></svg>
+              <input id="username" name="username" data-testid="username" type="text"
+                     autocomplete="username" placeholder="请输入账号" required>
+            </div>
+          </div>
+          <div class="field">
+            <label for="password">密码</label>
+            <div class="input-shell">
+              <svg class="input-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-lock"></use></svg>
+              <input id="password" name="password" data-testid="password" type="password"
+                     autocomplete="current-password" placeholder="请输入密码" required>
+            </div>
+          </div>
+          <p class="form-error" data-testid="login-error" role="alert" hidden></p>
+          <button type="submit" class="button button-primary button-block" data-testid="login-submit">
+            <span>进入工作台</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+          </button>
+        </form>
+
+        <div class="demo-accounts">
+          <p class="demo-title">演示账号</p>
+          <div class="demo-grid">
+            <button type="button" class="demo-account" data-username="admin" data-password="Admin@123">
+              <span class="demo-role">管理员</span>
+              <span>admin</span>
+            </button>
+            <button type="button" class="demo-account" data-username="operator" data-password="Operator@123">
+              <span class="demo-role">履约专员</span>
+              <span>operator</span>
+            </button>
+            <button type="button" class="demo-account" data-username="viewer" data-password="Viewer@123">
+              <span class="demo-role">只读审核</span>
+              <span>viewer</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <svg class="svg-sprite" aria-hidden="true">
+    <symbol id="icon-box" viewBox="0 0 24 24">
+      <path d="m21 8-9-5-9 5 9 5 9-5Z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v9"/>
+      <path d="m21 8v9l-9 5-9-5V8"/>
+    </symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>
+    </symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24">
+      <rect x="4" y="10" width="16" height="11" rx="2"/>
+      <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+    </symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+      <path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>
+    </symbol>
+  </svg>
+  <script src="/static/js/login.js" defer></script>
+</body>
+</html>
+

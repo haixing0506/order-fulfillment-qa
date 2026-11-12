@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title id="head-title">test-report.html</title>
+      <style type="text/css">body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  /* do not increase min-width as some may use split screens */
+  min-width: 800px;
+  color: #999;
+}
+
+h1 {
+  font-size: 24px;
+  color: black;
+}
+
+h2 {
+  font-size: 16px;
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+a {
+  color: #999;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/******************************
+ * SUMMARY INFORMATION
+ ******************************/
+#environment td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  vertical-align: top;
+}
+#environment tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+#environment ul {
+  margin: 0;
+  padding: 0 20px;
+}
+
+/******************************
+ * TEST RESULT COLORS
+ ******************************/
+span.passed,
+.passed .col-result {
+  color: green;
+}
+
+span.skipped,
+span.xfailed,
+span.rerun,
+.skipped .col-result,
+.xfailed .col-result,
+.rerun .col-result {
+  color: orange;
+}
+
+span.error,
+span.failed,
+span.xpassed,
+.error .col-result,
+.failed .col-result,
+.xpassed .col-result {
+  color: red;
+}
+
+.col-links__extra {
+  margin-right: 3px;
+}
+
+/******************************
+ * RESULTS TABLE
+ *
+ * 1. Table Layout
+ * 2. Extra
+ * 3. Sorting items
+ *
+ ******************************/
+/*------------------
+ * 1. Table Layout
+ *------------------*/
+#results-table {
+  border: 1px solid #e6e6e6;
+  color: #999;
+  font-size: 12px;
+  width: 100%;
+}
+#results-table th,
+#results-table td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  text-align: left;
+}
+#results-table th {
+  font-weight: bold;
+}
+
+/*------------------
+ * 2. Extra
+ *------------------*/
+.logwrapper {
+  max-height: 230px;
+  overflow-y: scroll;
+  background-color: #e6e6e6;
+}
+.logwrapper.expanded {
+  max-height: none;
+}
+.logwrapper.expanded .logexpander:after {
+  content: "collapse [-]";
+}
+.logwrapper .logexpander {
+  z-index: 1;
+  position: sticky;
+  top: 10px;
+  width: max-content;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 5px 7px;
+  margin: 10px 0 10px calc(100% - 80px);
+  cursor: pointer;
+  background-color: #e6e6e6;
+}
+.logwrapper .logexpander:after {
+  content: "expand [+]";
+}
+.logwrapper .logexpander:hover {
+  color: #000;
+  border-color: #000;
+}
+.logwrapper .log {
+  min-height: 40px;
+  position: relative;
+  top: -50px;
+  height: calc(100% + 50px);
+  border: 1px solid #e6e6e6;
+  color: black;
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  padding: 5px;
+  padding-right: 80px;
+  white-space: pre-wrap;
+}
+
+div.media {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin: 0 5px;
+  overflow: hidden;
+  width: 320px;
+}
+
+.media-container {
+  display: grid;
+  grid-template-columns: 25px auto 25px;
+  align-items: center;
+  flex: 1 1;
+  overflow: hidden;
+  height: 200px;
+}
+
+.media-container--fullscreen {
+  grid-template-columns: 0px auto 0px;
+}
+
+.media-container__nav--right,
+.media-container__nav--left {
+  text-align: center;
+  cursor: pointer;
+}
+
+.media-container__viewport {
+  cursor: pointer;
+  text-align: center;
+  height: inherit;
+}
+.media-container__viewport img,
+.media-container__viewport video {
+  object-fit: cover;
+  width: 100%;
+  max-height: 100%;
+}
+
+.media__name,
+.media__counter {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex: 0 0 25px;
+  align-items: center;
+}
+
+.collapsible td:not(.col-links) {
+  cursor: pointer;
+}
+.collapsible td:not(.col-links):hover::after {
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.col-result {
+  width: 130px;
+}
+.col-result:hover::after {
+  content: " (hide details)";
+}
+
+.col-result.collapsed:hover::after {
+  content: " (show details)";
+}
+
+#environment-header h2:hover::after {
+  content: " (hide details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#environment-header.collapsed h2:hover::after {
+  content: " (show details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/*------------------
+ * 3. Sorting items
+ *------------------*/
+.sortable {
+  cursor: pointer;
+}
+.sortable.desc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: -12.5px;
+  border: 10px solid #4caf50;
+  border-bottom: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+.sortable.asc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: 12.5px;
+  border: 10px solid #4caf50;
+  border-top: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.hidden, .summary__reload__button.hidden {
+  display: none;
+}
+
+.summary__data {
+  flex: 0 0 550px;
+}
+.summary__reload {
+  flex: 1 1;
+  display: flex;
+  justify-content: center;
+}
+.summary__reload__button {
+  flex: 0 0 300px;
+  display: flex;
+  color: white;
+  font-weight: bold;
+  background-color: #4caf50;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.summary__reload__button:hover {
+  background-color: #46a049;
+}
+.summary__spacer {
+  flex: 0 0 550px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filters,
+.collapse {
+  display: flex;
+  align-items: center;
+}
+.filters button,
+.collapse button {
+  color: #999;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.filters button:hover,
+.collapse button:hover {
+  color: #ccc;
+}
+
+.filter__label {
+  margin-right: 10px;
+}
+
+      </style>
+    
+  </head>
+  <body>
+    <h1 id="title">test-report.html</h1>
+    <p>Report generated on 12-Nov-2026 at 22:34:59 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a>
+        v4.2.0</p>
+    <div id="environment-header">
+      <h2>Environment</h2>
+    </div>
+    <table id="environment"></table>
+    <!-- TEMPLATES -->
+      <template id="template_environment_row">
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+    </template>
+    <template id="template_results-table__body--empty">
+      <tbody class="results-table-row">
+        <tr id="not-found-message">
+          <td colspan="4">No results found. Check the filters.</td>
+        </tr>
+      </tbody>
+    </template>
+    <template id="template_results-table__tbody">
+      <tbody class="results-table-row">
+        <tr class="collapsible">
+        </tr>
+        <tr class="extras-row">
+          <td class="extra" colspan="4">
+            <div class="extraHTML"></div>
+            <div class="media">
+              <div class="media-container">
+                  <div class="media-container__nav--left">&lt;</div>
+                  <div class="media-container__viewport">
+                    <img src="" />
+                    <video controls>
+                      <source src="" type="video/mp4">
+                    </video>
+                  </div>
+                  <div class="media-container__nav--right">&gt;</div>
+                </div>
+                <div class="media__name"></div>
+                <div class="media__counter"></div>
+            </div>
+            <div class="logwrapper">
+              <div class="logexpander"></div>
+              <div class="log"></div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+    <!-- END TEMPLATES -->
+    <div class="summary">
+      <div class="summary__data">
+        <h2>Summary</h2>
+        <div class="additional-summary prefix">
+        </div>
+        <p class="run-count">60 tests took 00:00:16.</p>
+        <p class="filter">(Un)check the boxes to filter the results.</p>
+        <div class="summary__reload">
+          <div class="summary__reload__button hidden" onclick="location.reload()">
+            <div>There are still tests running. <br />Reload this page to get the latest results!</div>
+          </div>
+        </div>
+        <div class="summary__spacer"></div>
+        <div class="controls">
+          <div class="filters">
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="failed" disabled>
+            <span class="failed">0 Failed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="passed" >
+            <span class="passed">60 Passed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="skipped" disabled>
+            <span class="skipped">0 Skipped,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xfailed" disabled>
+            <span class="xfailed">0 Expected failures,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xpassed" disabled>
+            <span class="xpassed">0 Unexpected passes,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="error" disabled>
+            <span class="error">0 Errors,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="rerun" disabled>
+            <span class="rerun">0 Reruns</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="retried" disabled>
+            <span class="retried">0 Retried,</span>
+          </div>
+          <div class="collapse">
+            <button id="show_all_details">Show all details</button>&nbsp;/&nbsp;<button id="hide_all_details">Hide all details</button>
+          </div>
+        </div>
+      </div>
+      <div class="additional-summary summary">
+      </div>
+      <div class="additional-summary postfix">
+      </div>
+    </div>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable" data-column-type="result">Result</th>
+          <th class="sortable" data-column-type="testId">Test</th>
+          <th class="sortable" data-column-type="duration">Duration</th>
+          <th>Links</th>
+        </tr>
+      </thead>
+    </table>
+  <footer>
+    <div id="data-container" data-jsonblob="{&#34;environment&#34;: {&#34;Python&#34;: &#34;3.15.2&#34;, &#34;Platform&#34;: &#34;Windows-11-10.0.26200-SP0&#34;, &#34;Packages&#34;: {&#34;pytest&#34;: &#34;9.2.0&#34;, &#34;pluggy&#34;: &#34;1.7.0&#34;}, &#34;Plugins&#34;: {&#34;anyio&#34;: &#34;4.16.0&#34;, &#34;locust&#34;: &#34;2.47.0&#34;, &#34;cov&#34;: &#34;7.1.0&#34;, &#34;html&#34;: &#34;4.2.0&#34;, &#34;metadata&#34;: &#34;3.1.1&#34;}}, &#34;tests&#34;: {&#34;tests/api/test_auth.py::test_admin_login_returns_token_and_profile&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_auth.py::test_admin_login_returns_token_and_profile&#34;, &#34;duration&#34;: &#34;261 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_auth.py::test_admin_login_returns_token_and_profile&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;261 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:43 | INFO    | app.database | database_schema_ready\n22:34:43 | INFO    | app.database | database_seed_completed\n22:34:43 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:44 | INFO    | app.auth | [56bb6c033a74490c8c3ebbe0bb4841c0] login_succeeded\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:44 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_auth.py::test_login_rejects_wrong_password_without_user_enumeration&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_auth.py::test_login_rejects_wrong_password_without_user_enumeration&#34;, &#34;duration&#34;: &#34;292 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_auth.py::test_login_rejects_wrong_password_without_user_enumeration&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;292 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:44 | INFO    | app.database | database_schema_ready\n22:34:44 | INFO    | app.database | database_seed_completed\n22:34:44 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:44 | WARNING | app.lifecycle | [504202df4b744e808bd1d994867043c9] application_error\n22:34:44 | WARNING | app.lifecycle | [026a98cbc21e4c4d95994d0738f8f768] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.security:auth.py:41 login_failed\nINFO     app.audit:audit.py:15 business_audit\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.security:auth.py:41 login_failed\nINFO     app.audit:audit.py:15 business_audit\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:44 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_auth.py::test_login_validates_short_password&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_auth.py::test_login_validates_short_password&#34;, &#34;duration&#34;: &#34;171 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_auth.py::test_login_validates_short_password&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;171 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:44 | INFO    | app.database | database_schema_ready\n22:34:44 | INFO    | app.database | database_seed_completed\n22:34:44 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:44 | INFO    | app.lifecycle | [23d70467b41b4dc0908cfa6813c6222a] request_validation_failed\n\n------------------------------ Captured log call -------------------------------\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:44 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_auth.py::test_me_requires_bearer_token&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_auth.py::test_me_requires_bearer_token&#34;, &#34;duration&#34;: &#34;169 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_auth.py::test_me_requires_bearer_token&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;169 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:44 | INFO    | app.database | database_schema_ready\n22:34:44 | INFO    | app.database | database_seed_completed\n22:34:44 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:44 | WARNING | app.lifecycle | [7267a5a66ad449139958749202dd17da] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.security:security.py:76 authentication_missing\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:44 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_auth.py::test_expired_token_is_rejected&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_auth.py::test_expired_token_is_rejected&#34;, &#34;duration&#34;: &#34;206 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_auth.py::test_expired_token_is_rejected&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;206 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:44 | INFO    | app.database | database_schema_ready\n22:34:44 | INFO    | app.database | database_seed_completed\n22:34:44 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:44 | WARNING | app.lifecycle | [5d671e2b9ab34c76bf2f7fb02b322c7d] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.security:security.py:89 authentication_token_invalid\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:44 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_auth.py::test_tampered_token_signature_is_rejected&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_auth.py::test_tampered_token_signature_is_rejected&#34;, &#34;duration&#34;: &#34;226 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_auth.py::test_tampered_token_signature_is_rejected&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;226 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:44 | INFO    | app.database | database_schema_ready\n22:34:45 | INFO    | app.database | database_seed_completed\n22:34:45 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:45 | INFO    | app.auth | [f8e3907d6f734389951d7d793914f73b] login_succeeded\n22:34:45 | WARNING | app.lifecycle | [35960f0621664641b8dee1224aa485d0] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.security:security.py:89 authentication_token_invalid\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:45 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_auth.py::test_token_contains_expected_claims&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_auth.py::test_token_contains_expected_claims&#34;, &#34;duration&#34;: &#34;216 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_auth.py::test_token_contains_expected_claims&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;216 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:45 | INFO    | app.database | database_schema_ready\n22:34:45 | INFO    | app.database | database_seed_completed\n22:34:45 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:45 | INFO    | app.auth | [88704f0b5c3e466ab2375695272ce4cf] login_succeeded\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:45 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_auth.py::test_unknown_user_still_runs_password_verification&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_auth.py::test_unknown_user_still_runs_password_verification&#34;, &#34;duration&#34;: &#34;258 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_auth.py::test_unknown_user_still_runs_password_verification&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;258 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:45 | INFO    | app.database | database_schema_ready\n22:34:45 | INFO    | app.database | database_seed_completed\n22:34:45 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:45 | WARNING | app.lifecycle | [4600f01864794ed6b9aeeaec6a250e13] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.security:auth.py:41 login_failed\nINFO     app.audit:audit.py:15 business_audit\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:45 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_boundaries.py::test_order_quantity_upper_boundary_is_accepted&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_boundaries.py::test_order_quantity_upper_boundary_is_accepted&#34;, &#34;duration&#34;: &#34;290 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_boundaries.py::test_order_quantity_upper_boundary_is_accepted&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;290 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:45 | INFO    | app.database | database_schema_ready\n22:34:45 | INFO    | app.database | database_seed_completed\n22:34:45 | INFO    | app.lifecycle | application_started\n22:34:45 | INFO    | app.auth | [bbe26f979ae2413da18f3569a77b9bef] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:45 | INFO    | app.orders | [0eadc4644c6a4b5594b8deaaa0c52857] order_created\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:45 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_boundaries.py::test_order_quantity_above_upper_boundary_is_rejected&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_boundaries.py::test_order_quantity_above_upper_boundary_is_rejected&#34;, &#34;duration&#34;: &#34;259 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_boundaries.py::test_order_quantity_above_upper_boundary_is_rejected&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;259 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:45 | INFO    | app.database | database_schema_ready\n22:34:46 | INFO    | app.database | database_seed_completed\n22:34:46 | INFO    | app.lifecycle | application_started\n22:34:46 | INFO    | app.auth | [ff12588d148d4c1a8dcfb21f38de2cae] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:46 | INFO    | app.lifecycle | [c8c7313d608b438f9a780e3bb918635a] request_validation_failed\n\n------------------------------ Captured log call -------------------------------\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:46 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_boundaries.py::test_duplicate_lines_are_merged_before_quantity_limit&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_boundaries.py::test_duplicate_lines_are_merged_before_quantity_limit&#34;, &#34;duration&#34;: &#34;236 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_boundaries.py::test_duplicate_lines_are_merged_before_quantity_limit&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;236 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:46 | INFO    | app.database | database_schema_ready\n22:34:46 | INFO    | app.database | database_seed_completed\n22:34:46 | INFO    | app.lifecycle | application_started\n22:34:46 | INFO    | app.auth | [e6c8367ffaa24984ab7f4464573334be] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:46 | WARNING | app.lifecycle | [98cb2592666e48e48cfcabf62033717d] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:46 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_boundaries.py::test_remark_length_boundaries&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_boundaries.py::test_remark_length_boundaries&#34;, &#34;duration&#34;: &#34;261 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_boundaries.py::test_remark_length_boundaries&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;261 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:46 | INFO    | app.database | database_schema_ready\n22:34:46 | INFO    | app.database | database_seed_completed\n22:34:46 | INFO    | app.lifecycle | application_started\n22:34:46 | INFO    | app.auth | [2e66cf6efd85454c96a01f254c58fdde] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:46 | INFO    | app.orders | [770a7d4165da40af92a8213b20f470eb] order_created\n22:34:46 | INFO    | app.lifecycle | [0269e84a9547488985651a77d842ac63] request_validation_failed\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:46 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_boundaries.py::test_pagination_size_and_page_boundaries&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_boundaries.py::test_pagination_size_and_page_boundaries&#34;, &#34;duration&#34;: &#34;246 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_boundaries.py::test_pagination_size_and_page_boundaries&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;246 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:46 | INFO    | app.database | database_schema_ready\n22:34:46 | INFO    | app.database | database_seed_completed\n22:34:46 | INFO    | app.lifecycle | application_started\n22:34:46 | INFO    | app.auth | [481ebe20aa994672aa14e7844d3ccbed] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:46 | INFO    | app.lifecycle | [741f811624a24e9c8600dfb131ef65f8] request_validation_failed\n22:34:46 | INFO    | app.lifecycle | [793a4a6c21e2468b8cd06acc989a3184] request_validation_failed\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:46 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_boundaries.py::test_stock_lower_boundary_marks_low_stock&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_boundaries.py::test_stock_lower_boundary_marks_low_stock&#34;, &#34;duration&#34;: &#34;241 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_boundaries.py::test_stock_lower_boundary_marks_low_stock&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;241 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:46 | INFO    | app.database | database_schema_ready\n22:34:47 | INFO    | app.database | database_seed_completed\n22:34:47 | INFO    | app.lifecycle | application_started\n22:34:47 | INFO    | app.auth | [d7a7449e50444835b352dd7996150ba6] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:47 | INFO    | app.catalog | [f2dfa254b64d4d7d998d4c0fb7da296c] stock_updated\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.catalog:catalog.py:156 stock_updated\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:47 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_boundaries.py::test_stock_upper_boundary_validation&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_boundaries.py::test_stock_upper_boundary_validation&#34;, &#34;duration&#34;: &#34;280 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_boundaries.py::test_stock_upper_boundary_validation&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;280 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:47 | INFO    | app.database | database_schema_ready\n22:34:47 | INFO    | app.database | database_seed_completed\n22:34:47 | INFO    | app.lifecycle | application_started\n22:34:47 | INFO    | app.auth | [09b09e4d4899417b8bab4c29004770d9] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:47 | INFO    | app.catalog | [9ae10fd489c44c5990d4a86b6a3936c6] stock_updated\n22:34:47 | INFO    | app.lifecycle | [757b8a8239ac4a3fbde6b37842a8736d] request_validation_failed\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.catalog:catalog.py:156 stock_updated\nINFO     app.access:middleware.py:60 http_request\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:47 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_boundaries.py::test_product_price_boundaries&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_boundaries.py::test_product_price_boundaries&#34;, &#34;duration&#34;: &#34;261 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_boundaries.py::test_product_price_boundaries&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;261 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:47 | INFO    | app.database | database_schema_ready\n22:34:47 | INFO    | app.database | database_seed_completed\n22:34:47 | INFO    | app.lifecycle | application_started\n22:34:47 | INFO    | app.auth | [89043de7133c4f0ea97bf2ed5396f209] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:47 | INFO    | app.lifecycle | [13f48172faf64523b2e360ad5f7e805f] request_validation_failed\n22:34:47 | INFO    | app.catalog | [bbd02d34512e4d82897919b330841edb] product_created\n\n------------------------------ Captured log call -------------------------------\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.catalog:catalog.py:128 product_created\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:47 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_contract.py::test_health_live_and_ready&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_contract.py::test_health_live_and_ready&#34;, &#34;duration&#34;: &#34;185 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_contract.py::test_health_live_and_ready&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;185 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:47 | INFO    | app.database | database_schema_ready\n22:34:47 | INFO    | app.database | database_seed_completed\n22:34:47 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:47 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_contract.py::test_success_envelope_contract&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_contract.py::test_success_envelope_contract&#34;, &#34;duration&#34;: &#34;236 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_contract.py::test_success_envelope_contract&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;236 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:47 | INFO    | app.database | database_schema_ready\n22:34:48 | INFO    | app.database | database_seed_completed\n22:34:48 | INFO    | app.lifecycle | application_started\n22:34:48 | INFO    | app.auth | [3524dfba88ab4902a3a110378aaed780] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:48 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_contract.py::test_error_envelope_contract&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_contract.py::test_error_envelope_contract&#34;, &#34;duration&#34;: &#34;175 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_contract.py::test_error_envelope_contract&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;175 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:48 | INFO    | app.database | database_schema_ready\n22:34:48 | INFO    | app.database | database_seed_completed\n22:34:48 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:48 | WARNING | app.lifecycle | [ed3fd0f698f64adf83d592a597c7b260] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.security:security.py:76 authentication_missing\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:48 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_contract.py::test_dashboard_summary_contract&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_contract.py::test_dashboard_summary_contract&#34;, &#34;duration&#34;: &#34;227 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_contract.py::test_dashboard_summary_contract&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;227 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:48 | INFO    | app.database | database_schema_ready\n22:34:48 | INFO    | app.database | database_seed_completed\n22:34:48 | INFO    | app.lifecycle | application_started\n22:34:48 | INFO    | app.auth | [e031e69df70e458e9d68110b9b656d92] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:48 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_observability.py::test_access_log_correlates_request_id&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_observability.py::test_access_log_correlates_request_id&#34;, &#34;duration&#34;: &#34;245 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_observability.py::test_access_log_correlates_request_id&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;245 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:48 | INFO    | app.database | database_schema_ready\n22:34:48 | INFO    | app.database | database_seed_completed\n22:34:48 | INFO    | app.lifecycle | application_started\n22:34:48 | INFO    | app.auth | [f8a1f30db727468d853408290b6a6d4d] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:48 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_observability.py::test_audit_log_records_order_creation&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_observability.py::test_audit_log_records_order_creation&#34;, &#34;duration&#34;: &#34;273 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_observability.py::test_audit_log_records_order_creation&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;273 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:48 | INFO    | app.database | database_schema_ready\n22:34:48 | INFO    | app.database | database_seed_completed\n22:34:48 | INFO    | app.lifecycle | application_started\n22:34:48 | INFO    | app.auth | [a0b4aa71526047f48dd153d841e61b6c] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:49 | INFO    | app.orders | [88124832f8824b32953396f8b1a98d64] order_created\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:49 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_observability.py::test_security_log_records_failed_login&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_observability.py::test_security_log_records_failed_login&#34;, &#34;duration&#34;: &#34;224 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_observability.py::test_security_log_records_failed_login&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;224 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:49 | INFO    | app.database | database_schema_ready\n22:34:49 | INFO    | app.database | database_seed_completed\n22:34:49 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:49 | WARNING | app.lifecycle | [25ca444319614a63a227f1c9911a262e] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.security:auth.py:41 login_failed\nINFO     app.audit:audit.py:15 business_audit\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:49 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_observability.py::test_log_sanitizer_masks_nested_secrets&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_observability.py::test_log_sanitizer_masks_nested_secrets&#34;, &#34;duration&#34;: &#34;1 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_observability.py::test_log_sanitizer_masks_nested_secrets&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;1 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;No log output captured.&#34;}], &#34;tests/api/test_orders.py::test_create_order_calculates_server_side_total_and_deducts_stock&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_create_order_calculates_server_side_total_and_deducts_stock&#34;, &#34;duration&#34;: &#34;277 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_create_order_calculates_server_side_total_and_deducts_stock&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;277 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:49 | INFO    | app.database | database_schema_ready\n22:34:49 | INFO    | app.database | database_seed_completed\n22:34:49 | INFO    | app.lifecycle | application_started\n22:34:49 | INFO    | app.auth | [ccbb4d959cb84de79965ca21e3c165fb] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:49 | INFO    | app.orders | [d81b5a2f6f814e0d8917737129202929] order_created\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:49 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_idempotency_key_replay_returns_same_order&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_idempotency_key_replay_returns_same_order&#34;, &#34;duration&#34;: &#34;282 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_idempotency_key_replay_returns_same_order&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;282 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:49 | INFO    | app.database | database_schema_ready\n22:34:49 | INFO    | app.database | database_seed_completed\n22:34:49 | INFO    | app.lifecycle | application_started\n22:34:49 | INFO    | app.auth | [7d2c83deb0d44ba1874fc547177517c0] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:49 | INFO    | app.orders | [847ef136e935477688013202f85967c9] order_created\n22:34:49 | INFO    | app.orders | [18f64c098a344ff4a6f02071ebeece1f] order_idempotent_replay\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\nINFO     app.orders:orders.py:134 order_idempotent_replay\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:49 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_same_idempotency_key_with_different_payload_is_rejected&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_same_idempotency_key_with_different_payload_is_rejected&#34;, &#34;duration&#34;: &#34;262 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_same_idempotency_key_with_different_payload_is_rejected&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;262 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:49 | INFO    | app.database | database_schema_ready\n22:34:49 | INFO    | app.database | database_seed_completed\n22:34:49 | INFO    | app.lifecycle | application_started\n22:34:50 | INFO    | app.auth | [cc672b8709404854b8bb1db34d51bd86] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:50 | INFO    | app.orders | [6bfa945b0ee6428cac170024d1f1845f] order_created\n22:34:50 | WARNING | app.lifecycle | [ad774c596d2a4d8ab7031be1fe1e0e06] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:50 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_insufficient_stock_returns_conflict&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_insufficient_stock_returns_conflict&#34;, &#34;duration&#34;: &#34;228 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_insufficient_stock_returns_conflict&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;228 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:50 | INFO    | app.database | database_schema_ready\n22:34:50 | INFO    | app.database | database_seed_completed\n22:34:50 | INFO    | app.lifecycle | application_started\n22:34:50 | INFO    | app.auth | [a5067b4d924a4edb91e1b50c50f56c0f] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:50 | WARNING | app.lifecycle | [10fb9d9a63aa448d9106345de4872bcd] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:50 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_invalid_item_quantity_is_rejected&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_invalid_item_quantity_is_rejected&#34;, &#34;duration&#34;: &#34;258 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_invalid_item_quantity_is_rejected&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;258 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:50 | INFO    | app.database | database_schema_ready\n22:34:50 | INFO    | app.database | database_seed_completed\n22:34:50 | INFO    | app.lifecycle | application_started\n22:34:50 | INFO    | app.auth | [a0ee247bb68a49ecb549bb0098c58743] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:50 | INFO    | app.lifecycle | [68410660ea2e487cb0a5536f0a0dfef2] request_validation_failed\n\n------------------------------ Captured log call -------------------------------\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:50 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_unknown_product_in_order_returns_404&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_unknown_product_in_order_returns_404&#34;, &#34;duration&#34;: &#34;294 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_unknown_product_in_order_returns_404&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;294 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:50 | INFO    | app.database | database_schema_ready\n22:34:50 | INFO    | app.database | database_seed_completed\n22:34:50 | INFO    | app.lifecycle | application_started\n22:34:50 | INFO    | app.auth | [ca1e2a27257e4eabaa374813cf26d1d3] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:50 | WARNING | app.lifecycle | [5ae1a5c94850442e956dea52c3364c27] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:50 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_cancel_order_restores_stock_once&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_cancel_order_restores_stock_once&#34;, &#34;duration&#34;: &#34;311 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_cancel_order_restores_stock_once&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;311 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:50 | INFO    | app.database | database_schema_ready\n22:34:51 | INFO    | app.database | database_seed_completed\n22:34:51 | INFO    | app.lifecycle | application_started\n22:34:51 | INFO    | app.auth | [291ce7ce58ed4b8d8bf4119ea72ed284] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:51 | INFO    | app.orders | [4cdeedf5a6ae4eec957e64bae53db4c6] order_created\n22:34:51 | INFO    | app.orders | [5664b3655ee8497e8048e73212b9ba89] order_cancelled\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:369 order_cancelled\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:51 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_valid_status_transition_chain&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_valid_status_transition_chain&#34;, &#34;duration&#34;: &#34;383 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_valid_status_transition_chain&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;383 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:51 | INFO    | app.database | database_schema_ready\n22:34:51 | INFO    | app.database | database_seed_completed\n22:34:51 | INFO    | app.lifecycle | application_started\n22:34:51 | INFO    | app.auth | [1927fb9e610e49b8889661b0251e20ff] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:51 | INFO    | app.orders | [271673c4f66d4cf0a53a9a5307afea75] order_created\n22:34:51 | INFO    | app.orders | [2ff73cd7bb13429b8827366ca02815e3] order_status_changed\n22:34:51 | INFO    | app.orders | [0f489e2a11844dd69bb75a70866efd50] order_status_changed\n22:34:51 | INFO    | app.orders | [dedcb0816c244da8911d0c83d2ccfd22] order_status_changed\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:322 order_status_changed\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:322 order_status_changed\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:322 order_status_changed\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:51 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_skipping_status_is_rejected&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_skipping_status_is_rejected&#34;, &#34;duration&#34;: &#34;259 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_skipping_status_is_rejected&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;259 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:51 | INFO    | app.database | database_schema_ready\n22:34:51 | INFO    | app.database | database_seed_completed\n22:34:51 | INFO    | app.lifecycle | application_started\n22:34:51 | INFO    | app.auth | [dfeb8d1c1e684269bd8e10cef6ead922] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:51 | INFO    | app.orders | [9cbb44f1894b4a74a369ee32f48d73e0] order_created\n22:34:51 | WARNING | app.lifecycle | [9d373cd74a7a4b4b95b97319ef117572] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:51 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_shipped_order_cannot_be_cancelled&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_shipped_order_cannot_be_cancelled&#34;, &#34;duration&#34;: &#34;284 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_shipped_order_cannot_be_cancelled&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;284 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:51 | INFO    | app.database | database_schema_ready\n22:34:51 | INFO    | app.database | database_seed_completed\n22:34:51 | INFO    | app.lifecycle | application_started\n22:34:52 | INFO    | app.auth | [69441ebaa9b74656af3105a544755bba] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:52 | INFO    | app.orders | [32c6f6e37ca24a5ab84e08a3818a1678] order_created\n22:34:52 | INFO    | app.orders | [42164856b6f54570a876d2dcc6c4b8a5] order_status_changed\n22:34:52 | INFO    | app.orders | [1aa12f64b2484af4b0e49b0ffb31de63] order_status_changed\n22:34:52 | WARNING | app.lifecycle | [fdcd3514518e429ba339d21a3cf9c3b9] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:322 order_status_changed\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:322 order_status_changed\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:52 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_order_list_supports_status_filter&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_order_list_supports_status_filter&#34;, &#34;duration&#34;: &#34;268 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_order_list_supports_status_filter&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;268 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:52 | INFO    | app.database | database_schema_ready\n22:34:52 | INFO    | app.database | database_seed_completed\n22:34:52 | INFO    | app.lifecycle | application_started\n22:34:52 | INFO    | app.auth | [bbc6a64165f04ac29c875e431d5eedf4] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:52 | INFO    | app.orders | [8d63b74049334ebdb8dcc6964847b7e1] order_created\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:52 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_order_detail_and_404&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_order_detail_and_404&#34;, &#34;duration&#34;: &#34;306 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_order_detail_and_404&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;306 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:52 | INFO    | app.database | database_schema_ready\n22:34:52 | INFO    | app.database | database_seed_completed\n22:34:52 | INFO    | app.lifecycle | application_started\n22:34:52 | INFO    | app.auth | [40048d5ae41342e39aa21aee7163e304] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:52 | INFO    | app.orders | [965c136a6be24a9d9bd54724cbe8a636] order_created\n22:34:52 | WARNING | app.lifecycle | [fdf8f0681b4043fe9a22b3e64116a787] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:52 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_idempotency_keys_are_scoped_by_user&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_idempotency_keys_are_scoped_by_user&#34;, &#34;duration&#34;: &#34;324 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_idempotency_keys_are_scoped_by_user&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;324 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:52 | INFO    | app.database | database_schema_ready\n22:34:52 | INFO    | app.database | database_seed_completed\n22:34:52 | INFO    | app.lifecycle | application_started\n22:34:52 | INFO    | app.auth | [e467db934b084cfab8604c0090c0fe78] login_succeeded\n22:34:52 | INFO    | app.auth | [65330c7bb37b43949c2d5c5eed45466c] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:52 | INFO    | app.orders | [8db9e1980fad4d70b33917fede848fef] order_created\n22:34:53 | INFO    | app.orders | [afd05a71bcc949509c1cb87069570430] order_created\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:53 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_orders.py::test_concurrent_orders_do_not_oversell&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_orders.py::test_concurrent_orders_do_not_oversell&#34;, &#34;duration&#34;: &#34;435 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_orders.py::test_concurrent_orders_do_not_oversell&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;435 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:53 | INFO    | app.database | database_schema_ready\n22:34:53 | INFO    | app.database | database_seed_completed\n22:34:53 | INFO    | app.lifecycle | application_started\n22:34:53 | INFO    | app.auth | [77dfadc122014dddae55083faace47a4] login_succeeded\n22:34:53 | INFO    | app.auth | [eb88ebe39ccc4fde9bbc99fe3f386771] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:53 | INFO    | app.catalog | [8e7ceaca86cc4ac78e7d82602ef9b706] product_created\n22:34:53 | INFO    | app.orders | [9bb95b3ffeef44e58a3bfc0d06c087ef] order_created\n22:34:53 | INFO    | app.orders | [aabd0ff6e5454ea2920eb14fe29f2517] order_created\n22:34:53 | INFO    | app.orders | [868bba484e0f4fd6bb74815189dbab3d] order_created\n22:34:53 | INFO    | app.orders | [74f4ee03d3074167b08918c9e2528eb0] order_created\n22:34:53 | INFO    | app.orders | [90f71a2707534c26a1b7a9d9a00d1772] order_created\n22:34:53 | WARNING | app.lifecycle | [5a8bd749cbcd40eb905c180fcf3311da] application_error\n22:34:53 | WARNING | app.lifecycle | [1b4fef15e72847a9a25bd446e591fa80] application_error\n22:34:53 | WARNING | app.lifecycle | [303c9759f0b941da8a258356fd70ac78] application_error\n22:34:53 | WARNING | app.lifecycle | [bcde9ff890f1408482e725218ceb2f65] application_error\n22:34:53 | WARNING | app.lifecycle | [3a66c1a2eee34ec69e42c93567e11641] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.catalog:catalog.py:128 product_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.lifecycle:main.py:87 application_error\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:53 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_permissions.py::test_viewer_cannot_create_order&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_permissions.py::test_viewer_cannot_create_order&#34;, &#34;duration&#34;: &#34;238 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_permissions.py::test_viewer_cannot_create_order&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;238 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:53 | INFO    | app.database | database_schema_ready\n22:34:53 | INFO    | app.database | database_seed_completed\n22:34:53 | INFO    | app.lifecycle | application_started\n22:34:53 | INFO    | app.auth | [fae0c959694d478490c2a24d97e62c51] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:53 | WARNING | app.lifecycle | [05d7f8775e664d799fcba7dadb96f1a8] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nWARNING  app.security:security.py:131 rbac_access_denied\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:53 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_permissions.py::test_operator_cannot_manage_catalog&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_permissions.py::test_operator_cannot_manage_catalog&#34;, &#34;duration&#34;: &#34;266 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_permissions.py::test_operator_cannot_manage_catalog&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;266 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:53 | INFO    | app.database | database_schema_ready\n22:34:53 | INFO    | app.database | database_seed_completed\n22:34:53 | INFO    | app.lifecycle | application_started\n22:34:53 | INFO    | app.auth | [91dcf0a94fda4171afa4ef7a6e5e6423] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:53 | WARNING | app.lifecycle | [b87da90f09784ede86456cb9870fe04b] application_error\n22:34:53 | WARNING | app.lifecycle | [4c0fbf148d8043ccb18b9d0f7956e2a4] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nWARNING  app.security:security.py:131 rbac_access_denied\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nWARNING  app.security:security.py:131 rbac_access_denied\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:53 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_permissions.py::test_viewer_can_read_orders&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_permissions.py::test_viewer_can_read_orders&#34;, &#34;duration&#34;: &#34;308 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_permissions.py::test_viewer_can_read_orders&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;308 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:53 | INFO    | app.database | database_schema_ready\n22:34:54 | INFO    | app.database | database_seed_completed\n22:34:54 | INFO    | app.lifecycle | application_started\n22:34:54 | INFO    | app.auth | [0be9ea8f0d264e54b23274642767375c] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:54 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_permissions.py::test_viewer_cannot_change_order_status&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_permissions.py::test_viewer_cannot_change_order_status&#34;, &#34;duration&#34;: &#34;305 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_permissions.py::test_viewer_cannot_change_order_status&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;305 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:54 | INFO    | app.database | database_schema_ready\n22:34:54 | INFO    | app.database | database_seed_completed\n22:34:54 | INFO    | app.lifecycle | application_started\n22:34:54 | INFO    | app.auth | [98b76d59b6964199a83ef85d7dabf41b] login_succeeded\n22:34:54 | INFO    | app.auth | [2b5b55a442154f229d4782e26f8c090f] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:54 | INFO    | app.orders | [e33b25c880ce4aac8374767092d32c8f] order_created\n22:34:54 | WARNING | app.lifecycle | [4c28ee5582b041f5bba3a33496cd07c1] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nWARNING  app.security:security.py:131 rbac_access_denied\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:54 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_permissions.py::test_admin_can_cancel_order&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_permissions.py::test_admin_can_cancel_order&#34;, &#34;duration&#34;: &#34;256 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_permissions.py::test_admin_can_cancel_order&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;256 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:54 | INFO    | app.database | database_schema_ready\n22:34:54 | INFO    | app.database | database_seed_completed\n22:34:54 | INFO    | app.lifecycle | application_started\n22:34:54 | INFO    | app.auth | [6fff075ef69a4a6eaa43338cdb771f4e] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:54 | INFO    | app.orders | [06da5013a25e453d94e19d8737a2aeb6] order_created\n22:34:54 | INFO    | app.orders | [27c20f8c855444068ec986767e675eae] order_cancelled\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:237 order_created\nINFO     app.access:middleware.py:60 http_request\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.orders:orders.py:369 order_cancelled\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:54 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_products.py::test_product_list_requires_authentication&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_products.py::test_product_list_requires_authentication&#34;, &#34;duration&#34;: &#34;200 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_products.py::test_product_list_requires_authentication&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;200 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:54 | INFO    | app.database | database_schema_ready\n22:34:55 | INFO    | app.database | database_seed_completed\n22:34:55 | INFO    | app.lifecycle | application_started\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\n\n----------------------------- Captured stdout call -----------------------------\n22:34:55 | WARNING | app.lifecycle | [f8d103fd5fbc47be95018afddf2716a7] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.security:security.py:76 authentication_missing\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:55 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_products.py::test_product_list_returns_seeded_catalog&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_products.py::test_product_list_returns_seeded_catalog&#34;, &#34;duration&#34;: &#34;241 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_products.py::test_product_list_returns_seeded_catalog&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;241 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:55 | INFO    | app.database | database_schema_ready\n22:34:55 | INFO    | app.database | database_seed_completed\n22:34:55 | INFO    | app.lifecycle | application_started\n22:34:55 | INFO    | app.auth | [29cdc0f756e348f1885f1b55c615cdfa] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:55 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_products.py::test_product_search_matches_chinese_name&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_products.py::test_product_search_matches_chinese_name&#34;, &#34;duration&#34;: &#34;250 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_products.py::test_product_search_matches_chinese_name&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;250 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:55 | INFO    | app.database | database_schema_ready\n22:34:55 | INFO    | app.database | database_seed_completed\n22:34:55 | INFO    | app.lifecycle | application_started\n22:34:55 | INFO    | app.auth | [993140afb4ff448a8cd2ea4c7e291d63] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:55 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_products.py::test_product_search_treats_sql_metacharacters_as_text&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_products.py::test_product_search_treats_sql_metacharacters_as_text&#34;, &#34;duration&#34;: &#34;241 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_products.py::test_product_search_treats_sql_metacharacters_as_text&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;241 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:55 | INFO    | app.database | database_schema_ready\n22:34:55 | INFO    | app.database | database_seed_completed\n22:34:55 | INFO    | app.lifecycle | application_started\n22:34:55 | INFO    | app.auth | [e3b84cb22a4a48e5999cd101eb81e6c6] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:55 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_products.py::test_product_pagination_and_category_filter&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_products.py::test_product_pagination_and_category_filter&#34;, &#34;duration&#34;: &#34;257 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_products.py::test_product_pagination_and_category_filter&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;257 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:55 | INFO    | app.database | database_schema_ready\n22:34:55 | INFO    | app.database | database_seed_completed\n22:34:55 | INFO    | app.lifecycle | application_started\n22:34:56 | INFO    | app.auth | [3a4ee8836bdf45b989a907884bffa634] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:56 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_products.py::test_missing_product_returns_structured_404&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_products.py::test_missing_product_returns_structured_404&#34;, &#34;duration&#34;: &#34;229 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_products.py::test_missing_product_returns_structured_404&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;229 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:56 | INFO    | app.database | database_schema_ready\n22:34:56 | INFO    | app.database | database_seed_completed\n22:34:56 | INFO    | app.lifecycle | application_started\n22:34:56 | INFO    | app.auth | [03b408d793df43bb819f54a90f5b9a5e] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:56 | WARNING | app.lifecycle | [e78ea099e51242f995aa441ed6b5a342] application_error\n\n------------------------------ Captured log call -------------------------------\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:56 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_products.py::test_admin_can_create_product_and_duplicate_sku_is_rejected&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_products.py::test_admin_can_create_product_and_duplicate_sku_is_rejected&#34;, &#34;duration&#34;: &#34;267 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_products.py::test_admin_can_create_product_and_duplicate_sku_is_rejected&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;267 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:56 | INFO    | app.database | database_schema_ready\n22:34:56 | INFO    | app.database | database_seed_completed\n22:34:56 | INFO    | app.lifecycle | application_started\n22:34:56 | INFO    | app.auth | [f2dcf9beaa2344499b0d439450075319] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:56 | INFO    | app.catalog | [c5f30543120e46e59da4a086ab043318] product_created\n22:34:56 | WARNING | app.lifecycle | [927e58368fad4b11a3106722f61296fa] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.catalog:catalog.py:128 product_created\nINFO     app.access:middleware.py:60 http_request\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:56 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_products.py::test_admin_stock_update_marks_low_stock&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_products.py::test_admin_stock_update_marks_low_stock&#34;, &#34;duration&#34;: &#34;245 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_products.py::test_admin_stock_update_marks_low_stock&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;245 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:56 | INFO    | app.database | database_schema_ready\n22:34:56 | INFO    | app.database | database_seed_completed\n22:34:56 | INFO    | app.lifecycle | application_started\n22:34:56 | INFO    | app.auth | [1ed26809d111465e94b708cc2b5ce281] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:56 | INFO    | app.catalog | [fa15e787d1154d418f1f66d1c8ebdf34] stock_updated\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.catalog:catalog.py:156 stock_updated\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:56 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_security.py::test_security_headers_are_present&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_security.py::test_security_headers_are_present&#34;, &#34;duration&#34;: &#34;236 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_security.py::test_security_headers_are_present&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;236 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:56 | INFO    | app.database | database_schema_ready\n22:34:56 | INFO    | app.database | database_seed_completed\n22:34:56 | INFO    | app.lifecycle | application_started\n22:34:57 | INFO    | app.auth | [0430b21cada249d282e1ea42c24b92b3] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:57 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_security.py::test_request_id_is_propagated&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_security.py::test_request_id_is_propagated&#34;, &#34;duration&#34;: &#34;279 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_security.py::test_request_id_is_propagated&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;279 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:57 | INFO    | app.database | database_schema_ready\n22:34:57 | INFO    | app.database | database_seed_completed\n22:34:57 | INFO    | app.lifecycle | application_started\n22:34:57 | INFO    | app.auth | [b5b913080ac84d75be5502f9c6ff5fa8] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:57 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_security.py::test_password_hash_is_never_exposed&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_security.py::test_password_hash_is_never_exposed&#34;, &#34;duration&#34;: &#34;241 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_security.py::test_password_hash_is_never_exposed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;241 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:57 | INFO    | app.database | database_schema_ready\n22:34:57 | INFO    | app.database | database_seed_completed\n22:34:57 | INFO    | app.lifecycle | application_started\n22:34:57 | INFO    | app.auth | [900371ff38bc4344a84f09e44695194e] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:57 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_security.py::test_unknown_field_in_order_is_rejected&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_security.py::test_unknown_field_in_order_is_rejected&#34;, &#34;duration&#34;: &#34;232 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_security.py::test_unknown_field_in_order_is_rejected&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;232 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:57 | INFO    | app.database | database_schema_ready\n22:34:57 | INFO    | app.database | database_seed_completed\n22:34:57 | INFO    | app.lifecycle | application_started\n22:34:57 | INFO    | app.auth | [c208e7faca8348d0a0ef720debdad6a7] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:57 | INFO    | app.lifecycle | [4e2fd1d7ab3d46dfb0c549d09f4592bd] request_validation_failed\n\n------------------------------ Captured log call -------------------------------\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:57 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_security.py::test_malformed_json_returns_controlled_error&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_security.py::test_malformed_json_returns_controlled_error&#34;, &#34;duration&#34;: &#34;247 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_security.py::test_malformed_json_returns_controlled_error&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;247 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:57 | INFO    | app.database | database_schema_ready\n22:34:57 | INFO    | app.database | database_seed_completed\n22:34:57 | INFO    | app.lifecycle | application_started\n22:34:58 | INFO    | app.auth | [2376b4b77f7744199f150e8cb016c238] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:58 | INFO    | app.lifecycle | [a72bf9660d314687ba5df4ef5acba330] request_validation_failed\n\n------------------------------ Captured log call -------------------------------\nINFO     app.lifecycle:main.py:114 request_validation_failed\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:58 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_security.py::test_unknown_route_uses_structured_error&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_security.py::test_unknown_route_uses_structured_error&#34;, &#34;duration&#34;: &#34;252 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_security.py::test_unknown_route_uses_structured_error&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;252 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:58 | INFO    | app.database | database_schema_ready\n22:34:58 | INFO    | app.database | database_seed_completed\n22:34:58 | INFO    | app.lifecycle | application_started\n22:34:58 | INFO    | app.auth | [cfe439e3c59e48c18b25f5e3f059aa55] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:58 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_security.py::test_viewer_token_cannot_escalate_role_through_request_body&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_security.py::test_viewer_token_cannot_escalate_role_through_request_body&#34;, &#34;duration&#34;: &#34;244 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_security.py::test_viewer_token_cannot_escalate_role_through_request_body&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;244 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:58 | INFO    | app.database | database_schema_ready\n22:34:58 | INFO    | app.database | database_seed_completed\n22:34:58 | INFO    | app.lifecycle | application_started\n22:34:58 | INFO    | app.auth | [bbdcede7ee924501a758654e5625c176] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n----------------------------- Captured stdout call -----------------------------\n22:34:58 | WARNING | app.lifecycle | [116047950bb9467682878cef9d8c7029] application_error\n\n------------------------------ Captured log call -------------------------------\nINFO     app.audit:audit.py:15 business_audit\nWARNING  app.security:security.py:131 rbac_access_denied\nWARNING  app.lifecycle:main.py:87 application_error\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:58 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_security.py::test_unsafe_request_id_is_replaced&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_security.py::test_unsafe_request_id_is_replaced&#34;, &#34;duration&#34;: &#34;239 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_security.py::test_unsafe_request_id_is_replaced&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;239 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:58 | INFO    | app.database | database_schema_ready\n22:34:58 | INFO    | app.database | database_seed_completed\n22:34:58 | INFO    | app.lifecycle | application_started\n22:34:58 | INFO    | app.auth | [d987549d7cb441d3acd6de93275f0461] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:58 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}], &#34;tests/api/test_security.py::test_sensitive_query_value_is_masked_in_access_log&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;tests/api/test_security.py::test_sensitive_query_value_is_masked_in_access_log&#34;, &#34;duration&#34;: &#34;270 ms&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;tests/api/test_security.py::test_sensitive_query_value_is_masked_in_access_log&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;270 ms&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;---------------------------- Captured stdout setup -----------------------------\n22:34:58 | INFO    | app.database | database_schema_ready\n22:34:58 | INFO    | app.database | database_seed_completed\n22:34:58 | INFO    | app.lifecycle | application_started\n22:34:59 | INFO    | app.auth | [e7037d5136fe460294800245b68596cc] login_succeeded\n\n------------------------------ Captured log setup ------------------------------\nINFO     app.database:database.py:109 database_schema_ready\nINFO     app.database:database.py:217 database_seed_completed\nINFO     app.lifecycle:main.py:37 application_started\nINFO     app.audit:audit.py:15 business_audit\nINFO     app.auth:auth.py:74 login_succeeded\nINFO     app.access:middleware.py:60 http_request\n\n------------------------------ Captured log call -------------------------------\nINFO     app.access:middleware.py:60 http_request\n\n--------------------------- Captured stdout teardown ---------------------------\n22:34:59 | INFO    | app.lifecycle | application_stopped\n\n---------------------------- Captured log teardown -----------------------------\nINFO     app.lifecycle:main.py:51 application_stopped&#34;}]}, &#34;renderCollapsed&#34;: [&#34;passed&#34;], &#34;initialSort&#34;: &#34;result&#34;, &#34;title&#34;: &#34;test-report.html&#34;}"></div>
+    <script>
+      (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const { getCollapsedCategory, setCollapsedIds } = require('./storage.js')
+
+class DataManager {
+    setManager(data) {
+        const collapsedCategories = [...getCollapsedCategory(data.renderCollapsed)]
+        const collapsedIds = []
+        const tests = Object.values(data.tests).flat().map((test, index) => {
+            const collapsed = collapsedCategories.includes(test.result.toLowerCase())
+            const id = `test_${index}`
+            if (collapsed) {
+                collapsedIds.push(id)
+            }
+            return {
+                ...test,
+                id,
+                collapsed,
+            }
+        })
+        const dataBlob = { ...data, tests }
+        this.data = { ...dataBlob }
+        this.renderData = { ...dataBlob }
+        setCollapsedIds(collapsedIds)
+    }
+
+    get allData() {
+        return { ...this.data }
+    }
+
+    resetRender() {
+        this.renderData = { ...this.data }
+    }
+
+    setRender(data) {
+        this.renderData.tests = [...data]
+    }
+
+    toggleCollapsedItem(id) {
+        this.renderData.tests = this.renderData.tests.map((test) =>
+            test.id === id ? { ...test, collapsed: !test.collapsed } : test,
+        )
+    }
+
+    set allCollapsed(collapsed) {
+        this.renderData = { ...this.renderData, tests: [...this.renderData.tests.map((test) => (
+            { ...test, collapsed }
+        ))] }
+    }
+
+    get testSubset() {
+        return [...this.renderData.tests]
+    }
+
+    get environment() {
+        return this.renderData.environment
+    }
+
+    get initialSort() {
+        return this.data.initialSort
+    }
+}
+
+module.exports = {
+    manager: new DataManager(),
+}
+
+},{"./storage.js":8}],2:[function(require,module,exports){
+const mediaViewer = require('./mediaviewer.js')
+const templateEnvRow = document.getElementById('template_environment_row')
+const templateResult = document.getElementById('template_results-table__tbody')
+
+function htmlToElements(html) {
+    const temp = document.createElement('template')
+    temp.innerHTML = html
+    return temp.content.childNodes
+}
+
+const find = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return elem.querySelector(selector)
+}
+
+const findAll = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return [...elem.querySelectorAll(selector)]
+}
+
+const dom = {
+    getStaticRow: (key, value) => {
+        const envRow = templateEnvRow.content.cloneNode(true)
+        const isObj = typeof value === 'object' && value !== null
+        const values = isObj ? Object.keys(value).map((k) => `${k}: ${value[k]}`) : null
+
+        const valuesElement = htmlToElements(
+            values ? `<ul>${values.map((val) => `<li>${val}</li>`).join('')}<ul>` : `<div>${value}</div>`)[0]
+        const td = findAll('td', envRow)
+        td[0].textContent = key
+        td[1].appendChild(valuesElement)
+
+        return envRow
+    },
+    getResultTBody: ({ testId, id, log, extras, resultsTableRow, tableHtml, result, collapsed }) => {
+        const resultBody = templateResult.content.cloneNode(true)
+        resultBody.querySelector('tbody').classList.add(result.toLowerCase())
+        resultBody.querySelector('tbody').id = testId
+        resultBody.querySelector('.collapsible').dataset.id = id
+
+        resultsTableRow.forEach((html) => {
+            const t = document.createElement('template')
+            t.innerHTML = html
+            resultBody.querySelector('.collapsible').appendChild(t.content)
+        })
+
+        if (log) {
+            // Wrap lines starting with "E" with span.error to color those lines red
+            const wrappedLog = log.replace(/^E.*$/gm, (match) => `<span class="error">${match}</span>`)
+            resultBody.querySelector('.log').innerHTML = wrappedLog
+        } else {
+            resultBody.querySelector('.log').remove()
+        }
+
+        if (collapsed) {
+            resultBody.querySelector('.collapsible > .col-result')?.classList.add('collapsed')
+            resultBody.querySelector('.extras-row').classList.add('hidden')
+        } else {
+            resultBody.querySelector('.collapsible > .col-result')?.classList.remove('collapsed')
+        }
+
+        const media = []
+        extras?.forEach(({ name, format_type, content }) => {
+            if (['image', 'video'].includes(format_type)) {
+                media.push({ path: content, name, format_type })
+            }
+
+            if (format_type === 'html') {
+                resultBody.querySelector('.extraHTML').insertAdjacentHTML('beforeend', `<div>${content}</div>`)
+            }
+        })
+        mediaViewer.setup(resultBody, media)
+
+        // Add custom html from the pytest_html_results_table_html hook
+        tableHtml?.forEach((item) => {
+            resultBody.querySelector('td[class="extra"]').insertAdjacentHTML('beforeend', item)
+        })
+
+        return resultBody
+    },
+}
+
+module.exports = {
+    dom,
+    htmlToElements,
+    find,
+    findAll,
+}
+
+},{"./mediaviewer.js":6}],3:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const storageModule = require('./storage.js')
+
+const getFilteredSubSet = (filter) =>
+    manager.allData.tests.filter(({ result }) => filter.includes(result.toLowerCase()))
+
+const doInitFilter = () => {
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+}
+
+const doFilter = (type, show) => {
+    if (show) {
+        storageModule.showCategory(type)
+    } else {
+        storageModule.hideCategory(type)
+    }
+
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+
+    const sortColumn = storageModule.getSort()
+    doSort(sortColumn, true)
+}
+
+module.exports = {
+    doFilter,
+    doInitFilter,
+}
+
+},{"./datamanager.js":1,"./sort.js":7,"./storage.js":8}],4:[function(require,module,exports){
+const { redraw, bindEvents, renderStatic } = require('./main.js')
+const { doInitFilter } = require('./filter.js')
+const { doInitSort } = require('./sort.js')
+const { manager } = require('./datamanager.js')
+const data = JSON.parse(document.getElementById('data-container').dataset.jsonblob)
+
+function init() {
+    manager.setManager(data)
+    doInitFilter()
+    doInitSort()
+    renderStatic()
+    redraw()
+    bindEvents()
+}
+
+init()
+
+},{"./datamanager.js":1,"./filter.js":3,"./main.js":5,"./sort.js":7}],5:[function(require,module,exports){
+const { dom, find, findAll } = require('./dom.js')
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const { doFilter } = require('./filter.js')
+const {
+    getVisible,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    getSortDirection,
+    possibleFilters,
+} = require('./storage.js')
+
+const removeChildren = (node) => {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild)
+    }
+}
+
+const renderStatic = () => {
+    const renderEnvironmentTable = () => {
+        const environment = manager.environment
+        const rows = Object.keys(environment).map((key) => dom.getStaticRow(key, environment[key]))
+        const table = document.getElementById('environment')
+        removeChildren(table)
+        rows.forEach((row) => table.appendChild(row))
+    }
+    renderEnvironmentTable()
+}
+
+const addItemToggleListener = (elem) => {
+    elem.addEventListener('click', ({ target }) => {
+        const id = target.parentElement.dataset.id
+        manager.toggleCollapsedItem(id)
+
+        const collapsedIds = getCollapsedIds()
+        if (collapsedIds.includes(id)) {
+            const updated = collapsedIds.filter((item) => item !== id)
+            setCollapsedIds(updated)
+        } else {
+            collapsedIds.push(id)
+            setCollapsedIds(collapsedIds)
+        }
+        redraw()
+    })
+}
+
+const renderContent = (tests) => {
+    const sortAttr = getSort(manager.initialSort)
+    const sortAsc = JSON.parse(getSortDirection())
+    const rows = tests.map(dom.getResultTBody)
+    const table = document.getElementById('results-table')
+    const tableHeader = document.getElementById('results-table-head')
+
+    const newTable = document.createElement('table')
+    newTable.id = 'results-table'
+
+    // remove all sorting classes and set the relevant
+    findAll('.sortable', tableHeader).forEach((elem) => elem.classList.remove('asc', 'desc'))
+    tableHeader.querySelector(`.sortable[data-column-type="${sortAttr}"]`)?.classList.add(sortAsc ? 'desc' : 'asc')
+    newTable.appendChild(tableHeader)
+
+    if (!rows.length) {
+        const emptyTable = document.getElementById('template_results-table__body--empty').content.cloneNode(true)
+        newTable.appendChild(emptyTable)
+    } else {
+        rows.forEach((row) => {
+            if (!!row) {
+                findAll('.collapsible td:not(.col-links', row).forEach(addItemToggleListener)
+                find('.logexpander', row).addEventListener('click',
+                    (evt) => evt.target.parentNode.classList.toggle('expanded'),
+                )
+                newTable.appendChild(row)
+            }
+        })
+    }
+
+    table.replaceWith(newTable)
+}
+
+const renderDerived = () => {
+    const currentFilter = getVisible()
+    possibleFilters.forEach((result) => {
+        const input = document.querySelector(`input[data-test-result="${result}"]`)
+        input.checked = currentFilter.includes(result)
+    })
+}
+
+const bindEvents = () => {
+    const filterColumn = (evt) => {
+        const { target: element } = evt
+        const { testResult } = element.dataset
+
+        doFilter(testResult, element.checked)
+        const collapsedIds = getCollapsedIds()
+        const updated = manager.renderData.tests.map((test) => {
+            return {
+                ...test,
+                collapsed: collapsedIds.includes(test.id),
+            }
+        })
+        manager.setRender(updated)
+        redraw()
+    }
+
+    const header = document.getElementById('environment-header')
+    header.addEventListener('click', () => {
+        const table = document.getElementById('environment')
+        table.classList.toggle('hidden')
+        header.classList.toggle('collapsed')
+    })
+
+    findAll('input[name="filter_checkbox"]').forEach((elem) => {
+        elem.addEventListener('click', filterColumn)
+    })
+
+    findAll('.sortable').forEach((elem) => {
+        elem.addEventListener('click', (evt) => {
+            const { target: element } = evt
+            const { columnType } = element.dataset
+            doSort(columnType)
+            redraw()
+        })
+    })
+
+    document.getElementById('show_all_details').addEventListener('click', () => {
+        manager.allCollapsed = false
+        setCollapsedIds([])
+        redraw()
+    })
+    document.getElementById('hide_all_details').addEventListener('click', () => {
+        manager.allCollapsed = true
+        const allIds = manager.renderData.tests.map((test) => test.id)
+        setCollapsedIds(allIds)
+        redraw()
+    })
+}
+
+const redraw = () => {
+    const { testSubset } = manager
+
+    renderContent(testSubset)
+    renderDerived()
+}
+
+module.exports = {
+    redraw,
+    bindEvents,
+    renderStatic,
+}
+
+},{"./datamanager.js":1,"./dom.js":2,"./filter.js":3,"./sort.js":7,"./storage.js":8}],6:[function(require,module,exports){
+class MediaViewer {
+    constructor(assets) {
+        this.assets = assets
+        this.index = 0
+    }
+
+    nextActive() {
+        this.index = this.index === this.assets.length - 1 ? 0 : this.index + 1
+        return [this.activeFile, this.index]
+    }
+
+    prevActive() {
+        this.index = this.index === 0 ? this.assets.length - 1 : this.index -1
+        return [this.activeFile, this.index]
+    }
+
+    get currentIndex() {
+        return this.index
+    }
+
+    get activeFile() {
+        return this.assets[this.index]
+    }
+}
+
+
+const setup = (resultBody, assets) => {
+    if (!assets.length) {
+        resultBody.querySelector('.media').classList.add('hidden')
+        return
+    }
+
+    const mediaViewer = new MediaViewer(assets)
+    const container = resultBody.querySelector('.media-container')
+    const leftArrow = resultBody.querySelector('.media-container__nav--left')
+    const rightArrow = resultBody.querySelector('.media-container__nav--right')
+    const mediaName = resultBody.querySelector('.media__name')
+    const counter = resultBody.querySelector('.media__counter')
+    const imageEl = resultBody.querySelector('img')
+    const sourceEl = resultBody.querySelector('source')
+    const videoEl = resultBody.querySelector('video')
+
+    const setImg = (media, index) => {
+        if (media?.format_type === 'image') {
+            imageEl.src = media.path
+
+            imageEl.classList.remove('hidden')
+            videoEl.classList.add('hidden')
+        } else if (media?.format_type === 'video') {
+            sourceEl.src = media.path
+
+            videoEl.classList.remove('hidden')
+            imageEl.classList.add('hidden')
+        }
+
+        mediaName.innerText = media?.name
+        counter.innerText = `${index + 1} / ${assets.length}`
+    }
+    setImg(mediaViewer.activeFile, mediaViewer.currentIndex)
+
+    const moveLeft = () => {
+        const [media, index] = mediaViewer.prevActive()
+        setImg(media, index)
+    }
+    const doRight = () => {
+        const [media, index] = mediaViewer.nextActive()
+        setImg(media, index)
+    }
+    const openImg = () => {
+        window.open(mediaViewer.activeFile.path, '_blank')
+    }
+    if (assets.length === 1) {
+        container.classList.add('media-container--fullscreen')
+    } else {
+        leftArrow.addEventListener('click', moveLeft)
+        rightArrow.addEventListener('click', doRight)
+    }
+    imageEl.addEventListener('click', openImg)
+}
+
+module.exports = {
+    setup,
+}
+
+},{}],7:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const storageModule = require('./storage.js')
+
+const genericSort = (list, key, ascending, customOrder) => {
+    let sorted
+    if (customOrder) {
+        sorted = list.sort((a, b) => {
+            const aValue = a.result.toLowerCase()
+            const bValue = b.result.toLowerCase()
+
+            const aIndex = customOrder.findIndex((item) => item.toLowerCase() === aValue)
+            const bIndex = customOrder.findIndex((item) => item.toLowerCase() === bValue)
+
+            // Compare the indices to determine the sort order
+            return aIndex - bIndex
+        })
+    } else {
+        sorted = list.sort((a, b) => a[key] === b[key] ? 0 : a[key] > b[key] ? 1 : -1)
+    }
+
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const durationSort = (list, ascending) => {
+    const parseDuration = (duration) => {
+        if (duration.includes(':')) {
+            // If it's in the format "HH:mm:ss"
+            const [hours, minutes, seconds] = duration.split(':').map(Number)
+            return (hours * 3600 + minutes * 60 + seconds) * 1000
+        } else {
+            // If it's in the format "nnn ms"
+            return parseInt(duration)
+        }
+    }
+    const sorted = list.sort((a, b) => parseDuration(a['duration']) - parseDuration(b['duration']))
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const doInitSort = () => {
+    const type = storageModule.getSort(manager.initialSort)
+    const ascending = storageModule.getSortDirection()
+    const list = manager.testSubset
+    const initialOrder = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed', 'Skipped', 'Passed']
+
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    if (type?.toLowerCase() === 'original') {
+        manager.setRender(list)
+    } else {
+        let sortedList
+        switch (type) {
+        case 'duration':
+            sortedList = durationSort(list, ascending)
+            break
+        case 'result':
+            sortedList = genericSort(list, type, ascending, initialOrder)
+            break
+        default:
+            sortedList = genericSort(list, type, ascending)
+            break
+        }
+        manager.setRender(sortedList)
+    }
+}
+
+const doSort = (type, skipDirection) => {
+    const newSortType = storageModule.getSort(manager.initialSort) !== type
+    const currentAsc = storageModule.getSortDirection()
+    let ascending
+    if (skipDirection) {
+        ascending = currentAsc
+    } else {
+        ascending = newSortType ? false : !currentAsc
+    }
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    const list = manager.testSubset
+    const sortedList = type === 'duration' ? durationSort(list, ascending) : genericSort(list, type, ascending)
+    manager.setRender(sortedList)
+}
+
+module.exports = {
+    doInitSort,
+    doSort,
+}
+
+},{"./datamanager.js":1,"./storage.js":8}],8:[function(require,module,exports){
+const possibleFilters = [
+    'passed',
+    'skipped',
+    'failed',
+    'error',
+    'xfailed',
+    'xpassed',
+    'rerun',
+]
+
+const getVisible = () => {
+    const url = new URL(window.location.href)
+    const settings = new URLSearchParams(url.search).get('visible')
+    const lower = (item) => {
+        const lowerItem = item.toLowerCase()
+        if (possibleFilters.includes(lowerItem)) {
+            return lowerItem
+        }
+        return null
+    }
+    return settings === null ?
+        possibleFilters :
+        [...new Set(settings?.split(',').map(lower).filter((item) => item))]
+}
+
+const hideCategory = (categoryToHide) => {
+    const url = new URL(window.location.href)
+    const visibleParams = new URLSearchParams(url.search).get('visible')
+    const currentVisible = visibleParams ? visibleParams.split(',') : [...possibleFilters]
+    const settings = [...new Set(currentVisible)].filter((f) => f !== categoryToHide).join(',')
+
+    url.searchParams.set('visible', settings)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const showCategory = (categoryToShow) => {
+    if (typeof window === 'undefined') {
+        return
+    }
+    const url = new URL(window.location.href)
+    const currentVisible = new URLSearchParams(url.search).get('visible')?.split(',').filter(Boolean) ||
+        [...possibleFilters]
+    const settings = [...new Set([categoryToShow, ...currentVisible])]
+    const noFilter = possibleFilters.length === settings.length || !settings.length
+
+    noFilter ? url.searchParams.delete('visible') : url.searchParams.set('visible', settings.join(','))
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getSort = (initialSort) => {
+    const url = new URL(window.location.href)
+    let sort = new URLSearchParams(url.search).get('sort')
+    if (!sort) {
+        sort = initialSort || 'result'
+    }
+    return sort
+}
+
+const setSort = (type) => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('sort', type)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getCollapsedCategory = (renderCollapsed) => {
+    let categories
+    if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href)
+        const collapsedItems = new URLSearchParams(url.search).get('collapsed')
+        switch (true) {
+        case !renderCollapsed && collapsedItems === null:
+            categories = ['passed']
+            break
+        case collapsedItems?.length === 0 || /^["']{2}$/.test(collapsedItems):
+            categories = []
+            break
+        case /^all$/.test(collapsedItems) || collapsedItems === null && /^all$/.test(renderCollapsed):
+            categories = [...possibleFilters]
+            break
+        default:
+            categories = collapsedItems?.split(',').map((item) => item.toLowerCase()) || renderCollapsed
+            break
+        }
+    } else {
+        categories = []
+    }
+    return categories
+}
+
+const getSortDirection = () => JSON.parse(sessionStorage.getItem('sortAsc')) || false
+const setSortDirection = (ascending) => sessionStorage.setItem('sortAsc', ascending)
+
+const getCollapsedIds = () => JSON.parse(sessionStorage.getItem('collapsedIds')) || []
+const setCollapsedIds = (list) => sessionStorage.setItem('collapsedIds', JSON.stringify(list))
+
+module.exports = {
+    getVisible,
+    hideCategory,
+    showCategory,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    setSort,
+    getSortDirection,
+    setSortDirection,
+    getCollapsedCategory,
+    possibleFilters,
+}
+
+},{}]},{},[4]);
+    </script>
+  </footer>
+  </body>
+</html>

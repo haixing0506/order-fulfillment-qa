@@ -1,0 +1,19 @@
+[project]
+name = "order-fulfillment-qa"
+version = "1.0.0"
+description = "Enterprise API automation, performance testing and observability portfolio"
+requires-python = ">=3.11"
+
+[tool.coverage.run]
+branch = true
+source = ["app"]
+omit = ["app/templates/*", "app/static/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+precision = 1
+
+[tool.coverage.html]
+directory = "reports/coverage"
+

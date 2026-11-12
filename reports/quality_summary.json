@@ -1,0 +1,507 @@
+{
+  "project": "履约中枢订单履约平台",
+  "version": "1.0.0",
+  "generated_at": "2026-11-12T14:32:47+00:00",
+  "overall_status": "未通过",
+  "release_recommendation": "接口回归与性能基线达标，可进入发布评审。BUG-006 需在网关或 WAF 完成登录限流后关闭；BUG-007 已获产品负责人接受。",
+  "test_execution": {
+    "tests": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0,
+    "pass_rate": 0.0,
+    "duration_seconds": 0.06,
+    "started_at": "2026-11-12T22:29:33.538193+08:00",
+    "latest_session": {
+      "started_at": "2026-11-12T14:29:33.493+00:00",
+      "finished_at": "2026-11-12T14:29:33.595+00:00",
+      "collected": 60,
+      "exit_status": 0,
+      "elapsed_seconds": 0.15,
+      "outcomes": {},
+      "case_count": 0,
+      "average_duration_ms": 0.0,
+      "slowest": []
+    }
+  },
+  "test_assets": {
+    "ledger_total": 66,
+    "interface_cases": 60,
+    "interface_passed": 60,
+    "performance_cases": 6,
+    "performance_passed": 6,
+    "type_counts": {
+      "功能": 16,
+      "安全": 18,
+      "异常": 9,
+      "边界": 8,
+      "并发": 1,
+      "可观测性": 4,
+      "契约": 4,
+      "性能": 5,
+      "稳定性": 1
+    },
+    "priority_counts": {
+      "P0": 24,
+      "P2": 12,
+      "P1": 30
+    },
+    "module_counts": {
+      "认证": {
+        "total": 8,
+        "passed": 8,
+        "rate": 100.0
+      },
+      "边界": {
+        "total": 8,
+        "passed": 8,
+        "rate": 100.0
+      },
+      "订单": {
+        "total": 13,
+        "passed": 13,
+        "rate": 100.0
+      },
+      "库存": {
+        "total": 1,
+        "passed": 1,
+        "rate": 100.0
+      },
+      "商品": {
+        "total": 8,
+        "passed": 8,
+        "rate": 100.0
+      },
+      "权限": {
+        "total": 5,
+        "passed": 5,
+        "rate": 100.0
+      },
+      "安全": {
+        "total": 9,
+        "passed": 9,
+        "rate": 100.0
+      },
+      "系统": {
+        "total": 4,
+        "passed": 4,
+        "rate": 100.0
+      },
+      "可观测性": {
+        "total": 4,
+        "passed": 4,
+        "rate": 100.0
+      },
+      "性能": {
+        "total": 6,
+        "passed": 6,
+        "rate": 100.0
+      }
+    }
+  },
+  "coverage": {
+    "percent": 95.28,
+    "statements": 868,
+    "covered_lines": 836,
+    "missing_lines": 32,
+    "lowest_files": [
+      {
+        "file": "app/config.py",
+        "percent": 87.18,
+        "statements": 37,
+        "missing": 4
+      },
+      {
+        "file": "app/security.py",
+        "percent": 91.14,
+        "statements": 71,
+        "missing": 5
+      },
+      {
+        "file": "app/observability/middleware.py",
+        "percent": 92.86,
+        "statements": 54,
+        "missing": 4
+      },
+      {
+        "file": "app/main.py",
+        "percent": 93.24,
+        "statements": 72,
+        "missing": 5
+      },
+      {
+        "file": "app/services/orders.py",
+        "percent": 93.58,
+        "statements": 143,
+        "missing": 6
+      },
+      {
+        "file": "app/observability/context.py",
+        "percent": 93.75,
+        "statements": 32,
+        "missing": 2
+      },
+      {
+        "file": "app/errors.py",
+        "percent": 95.65,
+        "statements": 23,
+        "missing": 1
+      },
+      {
+        "file": "app/services/catalog.py",
+        "percent": 95.65,
+        "statements": 82,
+        "missing": 2
+      },
+      {
+        "file": "app/observability/logging.py",
+        "percent": 97.04,
+        "statements": 109,
+        "missing": 2
+      },
+      {
+        "file": "app/database.py",
+        "percent": 97.4,
+        "statements": 67,
+        "missing": 1
+      }
+    ]
+  },
+  "performance": {
+    "requests": 3222,
+    "failures": 0,
+    "rps": 82.1063596723461,
+    "median": 12.0,
+    "average": 19.253657045667214,
+    "p95": 60.0,
+    "p99": 81.0,
+    "maximum": 180.0,
+    "read_p95": 37.0,
+    "write_p95": 100.0,
+    "endpoints": [
+      {
+        "type": "POST",
+        "name": "POST /api/v1/auth/login",
+        "requests": 169,
+        "failures": 0,
+        "rps": 4.306634011367627,
+        "median": 63.0,
+        "average": 67.74604142527785,
+        "p95": 100.0,
+        "p99": 120.0,
+        "maximum": 120.0
+      },
+      {
+        "type": "POST",
+        "name": "POST /api/v1/auth/login[invalid]",
+        "requests": 60,
+        "failures": 0,
+        "rps": 1.5289824892429442,
+        "median": 60.0,
+        "average": 62.656458327546716,
+        "p95": 78.0,
+        "p99": 94.0,
+        "maximum": 94.0
+      },
+      {
+        "type": "POST",
+        "name": "POST /api/v1/orders",
+        "requests": 838,
+        "failures": 0,
+        "rps": 21.354788766426456,
+        "median": 15.0,
+        "average": 19.94747829041166,
+        "p95": 50.0,
+        "p99": 66.0,
+        "maximum": 180.0
+      },
+      {
+        "type": "POST",
+        "name": "POST /api/v1/orders/{id}/cancel",
+        "requests": 553,
+        "failures": 0,
+        "rps": 14.09212194252247,
+        "median": 11.0,
+        "average": 15.044343215708114,
+        "p95": 41.0,
+        "p99": 54.0,
+        "maximum": 75.0
+      },
+      {
+        "type": "PATCH",
+        "name": "PATCH /api/v1/orders/{id}/status",
+        "requests": 384,
+        "failures": 0,
+        "rps": 9.785487931154844,
+        "median": 11.0,
+        "average": 15.287311996265393,
+        "p95": 39.0,
+        "p99": 58.0,
+        "maximum": 79.0
+      },
+      {
+        "type": "GET",
+        "name": "GET /api/v1/products",
+        "requests": 478,
+        "failures": 0,
+        "rps": 12.180893830968788,
+        "median": 9.0,
+        "average": 14.215646008668646,
+        "p95": 37.0,
+        "p99": 49.0,
+        "maximum": 150.0
+      },
+      {
+        "type": "GET",
+        "name": "GET /api/v1/orders",
+        "requests": 156,
+        "failures": 0,
+        "rps": 3.975354472031655,
+        "median": 9.0,
+        "average": 14.293491643352004,
+        "p95": 36.0,
+        "p99": 47.0,
+        "maximum": 51.0
+      },
+      {
+        "type": "GET",
+        "name": "GET /api/v1/dashboard/summary",
+        "requests": 269,
+        "failures": 0,
+        "rps": 6.854938160105867,
+        "median": 8.0,
+        "average": 12.506602965572288,
+        "p95": 34.0,
+        "p99": 38.0,
+        "maximum": 50.0
+      },
+      {
+        "type": "GET",
+        "name": "GET /api/v1/products/{id}",
+        "requests": 233,
+        "failures": 0,
+        "rps": 5.9375486665601,
+        "median": 8.0,
+        "average": 13.82936953163262,
+        "p95": 34.0,
+        "p99": 49.0,
+        "maximum": 180.0
+      },
+      {
+        "type": "GET",
+        "name": "GET /health/live",
+        "requests": 82,
+        "failures": 0,
+        "rps": 2.0896094019653573,
+        "median": 4.0,
+        "average": 3.7755524546544,
+        "p95": 6.0,
+        "p99": 14.0,
+        "maximum": 14.0
+      }
+    ],
+    "run": {
+      "timestamp": "2026-11-12T03:49:40.973+00:00",
+      "exit_code": 0,
+      "elapsed_seconds": 42.78,
+      "aggregated": {
+        "Type": "",
+        "Name": "Aggregated",
+        "Request Count": "3222",
+        "Failure Count": "0",
+        "Median Response Time": "12",
+        "Average Response Time": "19.253657045667214",
+        "Min Response Time": "1.646100077778101",
+        "Max Response Time": "178.56650007888675",
+        "Average Content Size": "594.1707014276847",
+        "Requests/s": "82.1063596723461",
+        "Failures/s": "0.0",
+        "50%": "12",
+        "66%": "18",
+        "75%": "23",
+        "80%": "27",
+        "90%": "44",
+        "95%": "60",
+        "98%": "72",
+        "99%": "81",
+        "99.9%": "150",
+        "99.99%": "180",
+        "100%": "180"
+      }
+    },
+    "error_log_bytes": 0,
+    "log_counts": {
+      "access": 6437,
+      "audit": 3705,
+      "security": 117,
+      "app": 4018,
+      "error": 0
+    },
+    "status": "通过"
+  },
+  "defects": {
+    "total": 7,
+    "status_counts": {
+      "已关闭": 5,
+      "待处理": 1,
+      "已接受": 1
+    },
+    "severity_counts": {
+      "中": 3,
+      "高": 1,
+      "低": 3
+    },
+    "open": 1,
+    "open_p1": 0,
+    "open_rows": [
+      {
+        "缺陷编号": "BUG-006",
+        "标题": "登录接口未内置频率限制与账户锁定",
+        "模块": "认证",
+        "严重级别": "中",
+        "优先级": "P2",
+        "发现阶段": "安全评审",
+        "发现方式": "威胁建模",
+        "环境": "local/test",
+        "复现概率": "按攻击强度",
+        "状态": "待处理",
+        "责任人": "开发工程师",
+        "发现日期": "2026-11-12",
+        "修复版本": "未修复",
+        "关联用例": "-",
+        "根本原因": "应用层未实现限流；当前依赖网关/WAF层",
+        "修复方案": "建议在网关增加 IP+账号维度限流和失败锁定；应用层增加审计告警",
+        "验证结果": "已记录为发布前安全加固项"
+      }
+    ],
+    "accepted_rows": [
+      {
+        "缺陷编号": "BUG-007",
+        "标题": "viewer 可查看全量订单而非仅本人订单",
+        "模块": "权限",
+        "严重级别": "低",
+        "优先级": "P3",
+        "发现阶段": "需求评审",
+        "发现方式": "业务规则确认",
+        "环境": "local/test",
+        "复现概率": "100%",
+        "状态": "已接受",
+        "责任人": "产品负责人",
+        "发现日期": "2026-11-12",
+        "修复版本": "-",
+        "关联用例": "TC-RBAC-003",
+        "根本原因": "后台审核场景需要查看全量订单",
+        "修复方案": "保持现状；后续如开放客户自助端需增加数据域隔离",
+        "验证结果": "业务确认接受该设计"
+      }
+    ]
+  },
+  "risks": {
+    "total": 10,
+    "status_counts": {
+      "已缓解": 9,
+      "监控中": 1
+    },
+    "severity_counts": {
+      "高": 4,
+      "中": 5,
+      "低": 1
+    },
+    "unresolved_high": 1
+  },
+  "traceability": {
+    "requirements": 20,
+    "executed": 20,
+    "coverage_rate": 100.0
+  },
+  "quality_gates": [
+    {
+      "维度": "接口自动化",
+      "指标": "用例通过率",
+      "目标": "100%",
+      "实际": "0.0% (0/0)",
+      "状态": "未达标",
+      "说明": "pytest 接口、安全、并发与日志用例"
+    },
+    {
+      "维度": "代码覆盖率",
+      "指标": "语句覆盖率",
+      "目标": "不低于 80%",
+      "实际": "95.3%",
+      "状态": "通过",
+      "说明": "pytest-cov 分支统计，排除模板与静态资源"
+    },
+    {
+      "维度": "性能",
+      "指标": "请求错误率",
+      "目标": "低于 1%",
+      "实际": "0.00%",
+      "状态": "通过",
+      "说明": "Locust 30 并发、5 用户每秒、40 秒"
+    },
+    {
+      "维度": "性能",
+      "指标": "读接口 P95",
+      "目标": "低于 300ms",
+      "实际": "37.0ms",
+      "状态": "通过",
+      "说明": "GET 接口最大 P95"
+    },
+    {
+      "维度": "性能",
+      "指标": "写接口 P95",
+      "目标": "低于 800ms",
+      "实际": "100.0ms",
+      "状态": "通过",
+      "说明": "POST 与 PATCH 接口最大 P95"
+    },
+    {
+      "维度": "性能",
+      "指标": "吞吐量",
+      "目标": "不低于 50 RPS",
+      "实际": "82.1 RPS",
+      "状态": "通过",
+      "说明": "单机 SQLite 演示环境"
+    },
+    {
+      "维度": "稳定性",
+      "指标": "性能 ERROR 日志",
+      "目标": "0 条",
+      "实际": "0 字节",
+      "状态": "通过",
+      "说明": "logs/performance/error.jsonl"
+    },
+    {
+      "维度": "缺陷",
+      "指标": "未关闭 P0/P1",
+      "目标": "0 项",
+      "实际": "0 项",
+      "状态": "通过",
+      "说明": "高优先级问题必须关闭或有批准豁免"
+    },
+    {
+      "维度": "需求追踪",
+      "指标": "需求项执行覆盖",
+      "目标": "100%",
+      "实际": "100.0% (20/20)",
+      "状态": "通过",
+      "说明": "需求、用例、脚本、缺陷与风险双向关联"
+    },
+    {
+      "维度": "可观测性",
+      "指标": "日志脱敏自动化",
+      "目标": "全部通过",
+      "实际": "通过",
+      "状态": "通过",
+      "说明": "嵌套字段脱敏与查询参数脱敏用例"
+    },
+    {
+      "维度": "用例资产",
+      "指标": "用例台账完整度",
+      "目标": "覆盖全部自动化与性能场景",
+      "实际": "66 项",
+      "状态": "通过",
+      "说明": "接口用例 60 项，性能场景 6 项"
+    }
+  ]
+}
